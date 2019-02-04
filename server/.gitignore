@@ -1,0 +1,6 @@
+node_modules/
+server.cert
+server.key
+.env
+.rnd
+.mp3
