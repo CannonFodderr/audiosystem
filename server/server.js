@@ -12,8 +12,11 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
 
+const apiRoutes = require('./routes/api');
+
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'semantic')));
+app.use(express.static(path.resolve(__dirname, '../', 'build')))
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -46,6 +49,11 @@ const options = {
     debug: true
 }
 
+app.use('/api', apiRoutes);
+
+app.get('/', (req, res) => {
+    res.sendFile('index.html', {root: __dirname});
+});
 // CONFIG PEER SERVER
 const peerserver = ExpressPeerServer(server, options);
 
