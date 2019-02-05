@@ -2,9 +2,9 @@
 const roomName = document.getElementById('room-title').innerHTML;
 console.log(roomName);
 const peer = new Peer(roomName, {
-    host: '10.0.0.13', 
+    host: '192.168.200.167', 
     port: '8080', 
-    path: '/api', 
+    path: '/peerjs', 
     sdpSemantics: 'unified-plan',
     debug: 0,
     // secure: true,

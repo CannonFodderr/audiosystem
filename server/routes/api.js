@@ -1,16 +1,18 @@
 const router = require('express').Router();
 const Room = require('../models/Room');
 const {isLoggedIn, isAdmin} = require('../middleware/auth');
+const passport = require('passport');
+const fs = require('fs');
 
-router.get('/test', (req, res) => {
-    res.json({msg: "Hello from express"});
-})
 // AUTHENTICATION
-router.post('/login', (req, res) => {
-    res.send("Post login");
+router.post('/login', passport.authenticate('local'), (req, res) => {
+    if(!req.user){
+        return res.json({err: "Username or Password are incorrect"})
+    }
+    return res.json({room: req.user});
 })
 
-router.get('/post', (req, res) => {
+router.post('/logout', (req, res) => {
     res.send("logout");
 })
 
@@ -33,6 +35,39 @@ router.get('/rooms/:roomId', isLoggedIn, (req, res) => {
     .catch(err => {
         console.log(err)
     })
+});
+
+
+router.get('/audio', (req, res) => {
+    console.log("Get file request")
+        const path = `server/public/test.mp3`;
+        const state = fs.statSync(path);
+        const fileSize = state.size;
+        const range = req.headers.range;
+        if(range){
+            const parts = range.replace(/bytes=/, "").split("-");
+            const start = parseInt(parts[0], 10);
+            const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+            const chunkSize = (end-start)+1;
+            const file = fs.createReadStream(path, {start, end});
+            const head = {
+                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                'Accept-Ranges': 'bytes',
+                'Content-Length': chunkSize,
+                'Content-Type': 'audio/mp3',
+            }
+            console.log("Streaming...")
+            res.writeHead(206, head);
+            file.pipe(res);
+        }else{
+            const head = {
+                'Content-Length': fileSize,
+                'Content-Type': 'audio/mp3',
+            }
+            console.log("Streaming first part")
+            res.writeHead(200, head)
+            fs.createReadStream(path).pipe(res)
+        }
 });
 
 module.exports = router;
