@@ -18,6 +18,7 @@ const rewind = document.getElementById('rewind');
 const fforward = document.getElementById('fforward');
 const oscActive = document.getElementById('oscActive');
 const oscGain = document.getElementById('oscGain');
+const host = window.location.hostname;
 
 
 const updateRoomsList = () => {
@@ -28,16 +29,11 @@ const updateRoomsList = () => {
     }
 }
 let peer = new Peer('admin', {
-    host: '10.0.0.13', 
+    host: host, 
     port: '8080', 
-    path: '/api', 
+    path: '/peerjs', 
     sdpSemantics: 'unified-plan',
     debug: 0,
-    // secure: true,
-    // config: { 'iceServers': [
-    //     { urls: 'stun:stun01.sipphone.com' },
-    //     { urls: 'stun:stun.ekiga.net' },
-    // ]},
 });
 peer.on('disconnected', () => {
     location.reload();

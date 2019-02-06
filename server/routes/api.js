@@ -10,11 +10,11 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
         return res.json({err: "Username or Password are incorrect"})
     }
     return res.json({room: req.user});
-})
+});
 
 router.post('/logout', (req, res) => {
     res.send("logout");
-})
+});
 
 // ROOMS
 // Get all rooms

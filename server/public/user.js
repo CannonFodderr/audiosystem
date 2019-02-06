@@ -1,17 +1,13 @@
 // PEER CONNECTION
 const roomName = document.getElementById('room-title').innerHTML;
-console.log(roomName);
+const host = window.location.hostname;
+
 const peer = new Peer(roomName, {
-    host: '192.168.200.167', 
+    host: host, 
     port: '8080', 
     path: '/peerjs', 
     sdpSemantics: 'unified-plan',
     debug: 0,
-    // secure: true,
-    // config: { 'iceServers': [
-    //     { urls: 'stun:stun01.sipphone.com' },
-    //     { urls: 'stun:stun.ekiga.net' },
-    // ]},
 });
 
 let reconnectAttempts = 0;
