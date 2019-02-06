@@ -3,6 +3,8 @@ import ModalTemplate from '../Modal/Modal';
 import LoginForm from '../LoginForm/LoginForm';
 import appContext from '../../contexts/appContext';
 import UserView from '../UserView/UserView';
+import AdminView from '../AdminView/AdminView';
+import {AdminContextStore} from '../../contexts/adminContext';
 
 class App extends Component{
     renderApp = () => {
@@ -19,7 +21,13 @@ class App extends Component{
             )
         }
         if(this.context.room.isAdmin === true){
-            return <div>ADMIN VIEW...</div>
+            return (
+            <div>
+                <AdminContextStore>
+                <AdminView />
+                </AdminContextStore>
+            </div>
+            )
         }
     }
     render(){

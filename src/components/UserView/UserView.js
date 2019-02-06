@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
-import {Button} from 'semantic-ui-react';
+import {Button, Icon} from 'semantic-ui-react';
 import Peer from 'peerjs';
-
 
 class UserView extends Component{
     renderView = () => {
         return(
             <div>
-                <Button id="startctx" content="Start" />
+                <Button id="startctx" color="teal"><Icon name="play"/>Ready</Button>
                 <div>
                     <audio src="/api/audio" id="userPlayer" crossorigin="anonymous"></audio>
                     <audio id="adminMicPlayer" crossorigin="anonymous"></audio>

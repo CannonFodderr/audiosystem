@@ -1,10 +1,21 @@
 import React, {Component} from 'react';
-import {Modal, Header, Button} from 'semantic-ui-react';
+import {Modal, Header, Button, Icon, Segment} from 'semantic-ui-react';
 
 class ModalTemplate extends Component{
+    renderTriggerButton = () => {
+        return (
+            <Segment inverted>
+                <Button color size="huge" inverted>
+                    <Icon.Group size='huge'>
+                        <Icon name='sign-in' />
+                    </Icon.Group>
+                </Button>
+            </Segment>
+        )
+    }
     render(){
         return(
-            <Modal trigger={<Button>Login</Button>} style={{display: "display: flex !important;" }}>
+            <Modal trigger={this.renderTriggerButton()} >
                 <Header content={this.props.header}/>
                 <Modal.Content>
                     {this.props.content}

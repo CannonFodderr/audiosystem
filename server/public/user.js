@@ -89,8 +89,7 @@ peer.on('disconnected', () => {
     reconnect()
 })
 
-document.addEventListener('readystatechange', () => {
-    if(document.readyState === "complete"){
+if(document.readyState === "complete"){
     console.log("Ready")
     // Start Audio Context after document is loaded
     startCtxBtn.addEventListener('click', () => {
@@ -98,7 +97,7 @@ document.addEventListener('readystatechange', () => {
         startCtxBtn.style.display = "none";
         initUserPlayback()
     });
-}})
+}
 
 
 

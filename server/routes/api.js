@@ -21,9 +21,8 @@ router.post('/logout', (req, res) => {
 router.get('/rooms', isAdmin, (req, res) => {
     Room.find()
     .then((allRooms) => {
-        console.log(allRooms);
         res.json(allRooms);
-    })
+    });
 });
 
 // Get Room Data

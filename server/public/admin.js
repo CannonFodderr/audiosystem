@@ -1,6 +1,6 @@
 // PEER CONNECTION
 
-let reconnectAttempts = 0;
+// let reconnectAttempts = 0;
 let ctx;
 let adminMicGain;
 let outputToUser;
@@ -21,20 +21,14 @@ const oscGain = document.getElementById('oscGain');
 const host = window.location.hostname;
 
 
-const updateRoomsList = () => {
-    const roomsList = document.getElementById('roomList');
-    roomsList.innerHTML = "";
-    for(room in peer.connections){
-        roomsList.innerHTML += `<option>${room}</option>`
-    }
-}
-let peer = new Peer('admin', {
-    host: host, 
-    port: '8080', 
-    path: '/peerjs', 
-    sdpSemantics: 'unified-plan',
-    debug: 0,
-});
+// const updateRoomsList = () => {
+//     const roomsList = document.getElementById('roomList');
+//     roomsList.innerHTML = "";
+//     for(room in peer.connections){
+//         roomsList.innerHTML += `<ListItem><List.Icon name='home' size='large' verticalAlign='middle'/><List.Content><List.Header>${room}</List.Header></List.Content></ListItem>`
+//     }
+// }
+
 peer.on('disconnected', () => {
     location.reload();
     // let reconnectInterval = setInterval(() => {
@@ -49,10 +43,10 @@ peer.on('disconnected', () => {
 })
 peer.on('connection', (conn) => {
     conn.on('open', () => {
-        startUserPlayerBtn.removeAttribute('disabled');
+        // startUserPlayerBtn.removeAttribute('disabled');
         conn.send({cmd: "admin connect"});
         console.log('got user online')
-        startCtx.removeAttribute('disabled');
+        // startCtx.removeAttribute('disabled');
         updateRoomsList()
         conn.on('data', (data) => {
             if(data.cmd === "update"){
@@ -140,11 +134,11 @@ const disableTransportButtons = () => {
     rewind.setAttribute('diabled', true);
     fforward.setAttribute('diabled', true);
 }
-startCtx.addEventListener('click', () => {
-    startCtx.setAttribute('disabled', true);
-    disconnectButton.removeAttribute('disabled');
-    setupAdminMic();
-});
+// startCtx.addEventListener('click', () => {
+//     startCtx.setAttribute('disabled', true);
+//     disconnectButton.removeAttribute('disabled');
+//     setupAdminMic();
+// });
 
 
 
