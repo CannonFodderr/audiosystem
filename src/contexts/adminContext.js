@@ -15,7 +15,10 @@ const INITIAL_STATE = {
     isPeerInitialized: false,
     rooms: [],
     onlineRooms: [],
-    selectedRoom: null
+    selectedRoom: null,
+    currentConnection: null,
+    currentCall: null,
+    connData: {},
 }
 
 export class AdminContextStore extends Component{
@@ -43,15 +46,45 @@ export class AdminContextStore extends Component{
     setPeerConnection = async () => {
         await this.setState({peer: new Peer('admin', peerConfig ), isPeerInitialized: true });
     }
+    setCurrentCommand = cmd => {
+        this.setState({cmd})
+    }
+    setCurrentCall = call => {
+        if(!this.state.currentCall){
+            this.setState({currentCall: call});
+        }
+    }
+    hangCurrentCall = () => {
+        if(this.state.currentCall){
+            console.log("HANGING UP CURRENT CALL");
+            this.state.currentCall.close();
+            this.setState({currentCall: null});
+        }
+    }
     componentDidMount(){
         this.setPeerConnection().then(()=>{
-            console.log(this.state.peer);
             this.state.peer.on('connection', (conn)=>{
                 let newOnlineRoomsList = [...this.state.onlineRooms, conn.peer];
                 this.setOnlineRooms(newOnlineRoomsList);
+                conn.on('open', () => {
+                    conn.send({cmd: "admin connect"});
+                })
                 conn.on('close', ()=>{
                     let newOnlineRoomsList = this.state.onlineRooms.filter(room => room !== conn.peer);
                     this.setOnlineRooms(newOnlineRoomsList);
+                });
+                conn.on('data', (data) => {
+                    if(this.state.selectedRoom && conn.peer === this.state.selectedRoom.username){
+                        if(this.state.currentConnection !== conn.peer){
+                            if(this.state.currentCall){
+                                this.state.currentCall.close()
+                            }
+                            this.setState({currentConnection: conn, currentCall: null});
+                            if(data.cmd ==="update"){
+                                this.setState({connData: data})
+                            }
+                        }
+                    }
                 });
             })
             this.getAllRooms()
@@ -62,11 +95,15 @@ export class AdminContextStore extends Component{
         this.setState({peer: new Peer('admin', peerConfig ), isPeerInitialized: true });
     }
     render(){
+        console.log(this.state);
         return(
             <Context.Provider value={{
                 ...this.state,
                 setPeerInitialized: this.setPeerInitialized,
-                setSelectedRoom: this.setSelectedRoom
+                setSelectedRoom: this.setSelectedRoom,
+                setCurrentCommand: this.setCurrentCommand,
+                setCurrentCall: this.setCurrentCall,
+                hangCurrentCall: this.hangCurrentCall
                 }}>
                 {this.props.children}
             </Context.Provider>

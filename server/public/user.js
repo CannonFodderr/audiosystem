@@ -183,7 +183,7 @@ const setupConnection = () =>{
     });
     conn.on('data', (data) => {
         const updateAdminUi = () => {
-            conn.send({cmd: "update" ,micGain: micGainValue, playerGain: playerGainValue, isPlaying});
+            conn.send({cmd: "update" ,micGain: micGainValue, playerGain: playerGainValue, isPlaying: isPlaying, playerTime: userPlayer.currentTime, isAdminConnected: isAdminConnected });
         }
         if(data.cmd === "admin connect"){
             console.log("Admin Connected");

@@ -8,7 +8,7 @@ class AdminView extends React.Component{
         if(!this.context.selectedRoom || !this.context.onlineRooms.includes(this.context.selectedRoom.username)){
             return <div></div>
         } else {
-            return <RoomControls room={this.context.selectedRoom}/>
+            return <RoomControls room={this.context.selectedRoom} />
         }
     }
     render(){

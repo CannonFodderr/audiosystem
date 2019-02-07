@@ -41,6 +41,7 @@ peer.on('disconnected', () => {
     //     }
     // }, 3000);
 })
+
 peer.on('connection', (conn) => {
     conn.on('open', () => {
         // startUserPlayerBtn.removeAttribute('disabled');
@@ -134,11 +135,11 @@ const disableTransportButtons = () => {
     rewind.setAttribute('diabled', true);
     fforward.setAttribute('diabled', true);
 }
-// startCtx.addEventListener('click', () => {
-//     startCtx.setAttribute('disabled', true);
-//     disconnectButton.removeAttribute('disabled');
-//     setupAdminMic();
-// });
+startCtx.addEventListener('click', () => {
+    startCtx.setAttribute('disabled', true);
+    disconnectButton.removeAttribute('disabled');
+    setupAdminMic();
+});
 
 
 
