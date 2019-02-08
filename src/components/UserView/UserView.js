@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Button} from 'semantic-ui-react';
-import Peer from 'peerjs';
+const Peer = window.Peer;
 
 
 class UserView extends Component{

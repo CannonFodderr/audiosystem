@@ -57,8 +57,8 @@ export class AdminContextStore extends Component{
     hangCurrentCall = () => {
         if(this.state.currentCall){
             console.log("HANGING UP CURRENT CALL");
-            this.state.currentCall.close();
-            this.setState({currentCall: null});
+            // this.state.currentCall.close();
+            // this.setState({currentCall: null});
         }
     }
     componentDidMount(){
@@ -95,7 +95,7 @@ export class AdminContextStore extends Component{
         this.setState({peer: new Peer('admin', peerConfig ), isPeerInitialized: true });
     }
     render(){
-        console.log(this.state);
+        // console.log(this.state);
         return(
             <Context.Provider value={{
                 ...this.state,

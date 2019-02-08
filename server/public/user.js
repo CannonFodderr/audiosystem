@@ -276,6 +276,7 @@ let createStreamToAdmin = async (call) => {
         let adminMicPlayer = document.getElementById('adminMicPlayer');
         adminMicPlayer.srcObject= adminStream;
         adminMicPlayer.play()
+        console.log(adminMicPlayer);
         // let adminTBSource = ctx.createMediaStreamSource(adminStream);
         // adminStream.connect(ctx.destination);
     });

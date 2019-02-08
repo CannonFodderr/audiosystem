@@ -91,7 +91,7 @@ class RoomControls extends React.Component{
         </Segment>
         )
     }
-    getUiElements = () => {
+    initUiElements = () => {
         startCtx = document.getElementById('startctx');
         disconnectButton = document.getElementById('disconnect');
         adminPlayer = document.querySelector('audio');
@@ -106,12 +106,34 @@ class RoomControls extends React.Component{
         fforward = document.getElementById('fforward');
         oscActive = document.getElementById('oscActive');
         oscGain = document.getElementById('oscGain');
+        this.disableUiElements();
+    }
+    disableUiElements = () => {
+        startCtx.removeAttribute('disabled')
+        startUserPlayerBtn.setAttribute('disabled', true);
+        pauseUserPlayerBtn.setAttribute('disabled', true);
+        stopUserPlayerBtn.setAttribute('disabled', true);
+        rewind.setAttribute('disabled', true);
+        fforward.setAttribute('disabled', true);
+        userMicGainSlider.setAttribute('disabled', true);
+        userPlayerGainSlider.setAttribute('disabled', true);
+    }
+    enableUiElements = () => {
+        startCtx.setAttribute('disabled', true);
+        startUserPlayerBtn.removeAttribute('disabled');
+        pauseUserPlayerBtn.removeAttribute('disabled');
+        stopUserPlayerBtn.removeAttribute('disabled');
+        rewind.removeAttribute('disabled');
+        fforward.removeAttribute('disabled');
+        userMicGainSlider.removeAttribute('disabled');
+        userPlayerGainSlider.removeAttribute('disabled');
     }
     initAudioContext = () => {
         startCtx.addEventListener('click', () => {
-            startCtx.setAttribute('disabled', true);
-            disconnectButton.removeAttribute('disabled');
-            this.setupAdminMic();
+            this.setupAdminMic()
+            .then(() => {
+                this.callToUser();
+            })
         });
     }
     setupControlsListeners = () => {
@@ -175,7 +197,7 @@ class RoomControls extends React.Component{
     }
     setupAdminMic = async () => {
         ctx = await new AudioContext();
-        navigator.mediaDevices.getUserMedia({audio: true})
+        await navigator.mediaDevices.getUserMedia({audio: true})
             .then((micStream) => {
             outputToUser = ctx.createMediaStreamDestination();
             let micSource = ctx.createMediaStreamSource(micStream);
@@ -183,28 +205,25 @@ class RoomControls extends React.Component{
             adminMicGain.gain.value = 0;
             micSource.connect(adminMicGain);
             adminMicGain.connect(outputToUser);
-            this.callToUser()
         })
         .catch(err => console.error(err))
     }
     callToUser = () => {
-        console.log(this.context);
         let call = this.context.peer.call(this.context.selectedRoom.username, outputToUser.stream);
         this.context.setCurrentCall(call);
         disconnectButton.addEventListener('click', () => {
-            startCtx.removeAttribute('disabled');
-            disconnectButton.setAttribute('disabled', true);
-            // call.close();
-            this.context.hangCurrentCall();
+            this.disableUiElements();
+            call.close();
         });
         call.on('stream', stream => {
             console.log("Got Stream...")
+            this.enableUiElements();
             adminPlayer.srcObject = stream;
             adminPlayer.play();
         })
-        call.on('close', () => {
-            console.log("CALL CLOSED");
-        });
+        // call.on('close', () => {
+        //     this.disableUiElements();
+        // })
         call.on('error', (err) => {
             console.log(err);
         });
@@ -222,7 +241,7 @@ class RoomControls extends React.Component{
         });
     }
     componentDidMount(){
-            this.getUiElements();
+            this.initUiElements();
             this.initAudioContext();
             this.setupControlsListeners();
             this.handlePeerData();
@@ -238,7 +257,6 @@ class RoomControls extends React.Component{
         }
     }
     render(){
-        
         return(
             <div>
                 <h1>{this.context.selectedRoom.username}</h1>
