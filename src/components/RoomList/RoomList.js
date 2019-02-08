@@ -10,7 +10,12 @@ class RoomList extends Component{
         return (
             <List divided relaxed>
                 {this.context.rooms.map((room, index) => {
-                    let color = this.context.onlineRooms.includes(room.username) ? 'green' : 'grey';
+                    let color;
+                    if(this.context.currentCall && this.context.currentCall === room.username){
+                        color = 'orange';
+                    } else {
+                        color = this.context.onlineRooms.includes(room.username) ? 'green' : 'grey';
+                    } 
                     if(room.isAdmin === true){
                         return
                     } else {

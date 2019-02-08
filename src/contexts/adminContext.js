@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {serverAPI} from '../api/api'
+import PeerClient from 'peerjs';
 const Context = React.createContext();
 const Peer = window.Peer;
 
@@ -35,13 +36,12 @@ export class AdminContextStore extends Component{
     }
     setOnlineRooms = onlineRooms => {
         this.setState({onlineRooms});
-        console.log(this.state.onlineRooms);
     } 
     setPeerInitialized = isPeerInitialized => {
         this.setState({isPeerInitialized})
     }
     setSelectedRoom = selectedRoom =>{
-        this.setState({selectedRoom});
+        this.setState({selectedRoom, currentCall: null});
     }
     setPeerConnection = async () => {
         await this.setState({peer: new Peer('admin', peerConfig ), isPeerInitialized: true });
@@ -76,10 +76,7 @@ export class AdminContextStore extends Component{
                 conn.on('data', (data) => {
                     if(this.state.selectedRoom && conn.peer === this.state.selectedRoom.username){
                         if(this.state.currentConnection !== conn.peer){
-                            if(this.state.currentCall){
-                                this.state.currentCall.close()
-                            }
-                            this.setState({currentConnection: conn, currentCall: null});
+                            this.setState({currentConnection: conn});
                             if(data.cmd ==="update"){
                                 this.setState({connData: data})
                             }
@@ -89,10 +86,10 @@ export class AdminContextStore extends Component{
             })
             this.getAllRooms()
         })
+        .catch(err => console.log(err))
     }
     componentWillUnmount(){
         this.state.peer.destroy();
-        this.setState({peer: new Peer('admin', peerConfig ), isPeerInitialized: true });
     }
     render(){
         // console.log(this.state);

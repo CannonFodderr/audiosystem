@@ -16,7 +16,7 @@ class AdminView extends React.Component{
             <div>
                 <h1>ADMIN VIEW</h1>
                 <RoomList />
-                {this.renderRoomControls()};
+                {this.renderRoomControls()}
             </div>
         )
     }

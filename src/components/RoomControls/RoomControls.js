@@ -2,6 +2,7 @@ import React from 'react';
 import {Input, Button, Label, Checkbox, Segment} from 'semantic-ui-react';
 import {Slider} from 'react-semantic-ui-range';
 import adminContext from '../../contexts/adminContext';
+const Peer = window.Peer;
 
 let ctx;
 let adminMicGain;
@@ -25,7 +26,7 @@ class RoomControls extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-
+            call: null
         }
     }
     renderRoomMixControls = () => {
@@ -109,7 +110,9 @@ class RoomControls extends React.Component{
         this.disableUiElements();
     }
     disableUiElements = () => {
-        startCtx.removeAttribute('disabled')
+        startCtx.removeAttribute('disabled');
+        disconnectButton.setAttribute('disabled', true);
+        talkBackButton.setAttribute('disabled', true);
         startUserPlayerBtn.setAttribute('disabled', true);
         pauseUserPlayerBtn.setAttribute('disabled', true);
         stopUserPlayerBtn.setAttribute('disabled', true);
@@ -121,6 +124,8 @@ class RoomControls extends React.Component{
     enableUiElements = () => {
         startCtx.setAttribute('disabled', true);
         startUserPlayerBtn.removeAttribute('disabled');
+        disconnectButton.removeAttribute('disabled');
+        talkBackButton.removeAttribute('disabled');
         pauseUserPlayerBtn.removeAttribute('disabled');
         stopUserPlayerBtn.removeAttribute('disabled');
         rewind.removeAttribute('disabled');
@@ -209,13 +214,13 @@ class RoomControls extends React.Component{
         .catch(err => console.error(err))
     }
     callToUser = () => {
-        let call = this.context.peer.call(this.context.selectedRoom.username, outputToUser.stream);
-        this.context.setCurrentCall(call);
+        this.setState({call: this.context.peer.call(this.context.selectedRoom.username, outputToUser.stream)});
+        console.log(this.state.call);
         disconnectButton.addEventListener('click', () => {
-            this.disableUiElements();
-            call.close();
+            this.endCurrentCall();
         });
-        call.on('stream', stream => {
+        this.context.setCurrentCall(this.state.call.peer)
+        this.state.call.on('stream', stream => {
             console.log("Got Stream...")
             this.enableUiElements();
             adminPlayer.srcObject = stream;
@@ -224,7 +229,7 @@ class RoomControls extends React.Component{
         // call.on('close', () => {
         //     this.disableUiElements();
         // })
-        call.on('error', (err) => {
+        this.state.call.on('error', (err) => {
             console.log(err);
         });
     }
@@ -256,7 +261,16 @@ class RoomControls extends React.Component{
             return <div>Current Player Time: <span id="timeDisplay">0:0</span></div>
         }
     }
+    endCurrentCall = () => {
+        console.log("Call Ended...");
+        this.state.call.close();
+        this.disableUiElements();
+        this.setState({call: null});
+    }
     render(){
+        if(this.state.call && this.context.selectedRoom.username !== this.state.call.peer){
+            this.endCurrentCall();
+        }
         return(
             <div>
                 <h1>{this.context.selectedRoom.username}</h1>
