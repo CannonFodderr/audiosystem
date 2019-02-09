@@ -1,5 +1,5 @@
 import React from 'react';
-import {Input, Button, Label, Checkbox, Segment} from 'semantic-ui-react';
+import {Input, Button, Label, Checkbox, Segment, Container, Header} from 'semantic-ui-react';
 import {Slider} from 'react-semantic-ui-range';
 import adminContext from '../../contexts/adminContext';
 const Peer = window.Peer;
@@ -31,7 +31,7 @@ class RoomControls extends React.Component{
     }
     renderRoomMixControls = () => {
         return(
-            <Segment>
+            <Segment inverted>
                 <h4>Mic Volume</h4>
                 <input
                 id="micGain"
@@ -57,9 +57,9 @@ class RoomControls extends React.Component{
     }
     renderOscControls = () => {
         return(
-            <Segment>
+            <Segment inverted>
                 <h4>OSC</h4>
-                <input type="checkbox" id="oscActive" checked />
+                <Checkbox toggle id="oscActive" defaultChecked/>
                 <input 
                 id="oscGain"
                 min={1}
@@ -74,12 +74,12 @@ class RoomControls extends React.Component{
     }
     renderPlayerControls = () => {
         return (
-        <Segment>
+        <Segment inverted>
             <h4>Connection</h4>
             <Button.Group>
-                <Button icon='assistive listening systems' id="startctx" content="Listen to room"/>
-                <Button icon='sign out' id="disconnect" content="disconnect"/>
-                <Button icon='microphone' id="talkback" content="Hold to talk"/>
+                <Button icon='assistive listening systems' id="startctx" content="Listen to room" color="blue"/>
+                <Button icon='sign out' id="disconnect" content="disconnect" color="red"/>
+                <Button size="large" icon='microphone' id="talkback" content="Hold to talk" color="blue"/>
             </Button.Group>
             <h4>Controls</h4>
             <Button.Group>
@@ -142,7 +142,6 @@ class RoomControls extends React.Component{
         });
     }
     setupControlsListeners = () => {
-        console.log("setup control listeners");
         oscActive.addEventListener('change', (e) => {
             console.log("Value: ", e.target.value);
             if(e.target.value === "on"){
@@ -153,25 +152,22 @@ class RoomControls extends React.Component{
             this.context.currentConnection.send({cmd: "osc state", value: e.target.value});
         })
         oscGain.addEventListener('change', (e) => {
-            console.log("Value: ", e.target.value);
             this.context.currentConnection.send({cmd: "osc gain", value: e.target.value / 10000 });
         })
         userMicGainSlider.addEventListener('change', (e) => {
-            console.log("Value: ", e.target.value);
             this.context.currentConnection.send({cmd: "mic gain", value: e.target.value / 100 });
         });
         userPlayerGainSlider.addEventListener('change', (e) => {
-            console.log("Value: ", e.target.value);
             this.context.currentConnection.send({cmd: "player gain", value: e.target.value / 100 });
         });
         talkBackButton.addEventListener('mousedown', () => {
+            talkBackButton.style.background = "orange"
             adminMicGain.gain.value = 0.7;
-            console.log(adminMicGain.gain.value)
             this.context.currentConnection.send("Talkback open")
         });
         talkBackButton.addEventListener('mouseup', () => {
+            talkBackButton.style.background = "#2185d0"
             adminMicGain.gain.value = 0;
-            console.log(adminMicGain.gain.value)
             this.context.currentConnection.send("Talkback closed")
         });
         startUserPlayerBtn.addEventListener('click', () => {
@@ -256,31 +252,43 @@ class RoomControls extends React.Component{
             let min = Math.floor(this.context.connData.playerTime / 60)
             let sec = Math.round(this.context.connData.playerTime - min * 60);
             let timeString = `${min}:${sec}`;
-            return <div>Current Player Time: <span id="timeDisplay">{timeString}</span></div>
+            return (
+                <Segment inverted>
+                    <Header>Current Player Time: <span id="timeDisplay">{timeString}</span></Header>
+                </Segment>
+                )
         } else {
-            return <div>Current Player Time: <span id="timeDisplay">0:0</span></div>
+            return (
+                <Segment inverted>
+                    <Header>Current Player Time: <span id="timeDisplay">0:0</span></Header>
+                </Segment>
+            )
         }
     }
     endCurrentCall = () => {
-        console.log("Call Ended...");
-        this.state.call.close();
-        this.disableUiElements();
-        this.setState({call: null});
+        if(this.state.call){
+            console.log("Call Ended...");
+            this.state.call.close();
+            this.disableUiElements();
+            this.setState({call: null});
+            this.context.setCurrentCall(null);
+        }
     }
     render(){
         if(this.state.call && this.context.selectedRoom.username !== this.state.call.peer){
             this.endCurrentCall();
         }
         return(
-            <div>
-                <h1>{this.context.selectedRoom.username}</h1>
-                <h4>Room Controls</h4>
-                {this.renderUserPlayerTime()}
-                <audio controls={true} crossorigin="anonymous"></audio>
-                {this.renderOscControls()}
-                {this.renderPlayerControls()}
-                {this.renderRoomMixControls()}
-            </div>
+            <Container>
+                <Segment inverted>
+                    <h1>{this.context.selectedRoom.username}</h1>
+                    {this.renderUserPlayerTime()}
+                    <audio crossorigin="anonymous"></audio>
+                    {this.renderPlayerControls()}
+                    {this.renderRoomMixControls()}
+                    {this.renderOscControls()}
+                </Segment>
+            </Container>
         )
     }
 }
