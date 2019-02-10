@@ -20,7 +20,7 @@ router.post('/logout', (req, res) => {
 
 // ROOMS
 // Get all rooms
-router.get('/rooms', isLoggedIn, (req, res) => {
+router.get('/rooms', isAdmin, (req, res) => {
     Room.find().populate('currentUser').populate('currentBook').exec()
     .then((allRooms) => {
         res.json(allRooms);
@@ -37,19 +37,17 @@ router.get('/rooms/:roomId', isLoggedIn, (req, res) => {
         console.log(err)
     })
 });
-router.put(`/rooms/:roomId`, isLoggedIn, (req, res) => {
-    console.log("Got room update request:", req.params.roomId, req.body);
+router.put(`/rooms/:roomId`, isAdmin, (req, res) => {
     Room.findOneAndUpdate({_id: req.params.roomId}, req.body)
     .then(updatedRoom => {
         updatedRoom.save();
-        console.log(updatedRoom);
         res.json(updatedRoom);
     })
     .catch(err => console.log(err));
 })
 
 // USER
-router.get('/users', isLoggedIn, (req, res) =>{
+router.get('/users', isAdmin, (req, res) =>{
     User.find()
     .then(allUsers => {
         res.json(allUsers)
@@ -57,7 +55,7 @@ router.get('/users', isLoggedIn, (req, res) =>{
     .catch(err => console.log(err));
 });
 // Find user by id
-router.get('/users/:userId', (req, res) => {
+router.get('/users/:userId',isLoggedIn, (req, res) => {
     User.findById(req.params.userId)
     .then(foundUser => {
         res.json(foundUser)

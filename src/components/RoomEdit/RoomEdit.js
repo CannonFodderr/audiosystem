@@ -60,15 +60,14 @@ class RoomEdit extends Component{
             currentBook: this.state.currentBook,
             currentPart: this.state.currentPart
         }
-        
-        serverAPI.put(`/rooms/${this.context.selectedRoom._id}`, data).then((res) => {
-            console.log(res.data);
+        serverAPI.put(`/rooms/${this.context.selectedRoom._id}`, data)
+        .then(() => {
             this.context.getAllRooms();
         })
         .catch(err => console.log(err));
     }
-    clearCurrentRoomData = () => {
-        this.setState({
+    clearCurrentRoomData = async () => {
+        await this.setState({
             currentUser: null,
             currentBook: null,
             currentPart: null

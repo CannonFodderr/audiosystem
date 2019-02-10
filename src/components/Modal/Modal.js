@@ -4,13 +4,15 @@ import {Modal, Header, Button, Icon, Segment} from 'semantic-ui-react';
 class ModalTemplate extends Component{
     renderTriggerButton = () => {
         return (
-            <Segment inverted>
-                <Button color size="huge" inverted>
-                    <Icon.Group size='huge'>
+            <div style={{width:"100vw", height:"100vh", background:"#000"}}>
+            <Segment size="massive" inverted>
+                <Button color size="massive" inverted>
+                    <Icon.Group size="massive">
                         <Icon name='sign-in' />
                     </Icon.Group>
                 </Button>
             </Segment>
+            </div>
         )
     }
     render(){
