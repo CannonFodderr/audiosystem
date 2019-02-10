@@ -17,6 +17,7 @@ const INITIAL_STATE = {
     rooms: [],
     onlineRooms: [],
     selectedRoom: null,
+    editRoom: false,
     currentConnection: null,
     currentCall: null,
     connData: {},
@@ -30,6 +31,7 @@ export class AdminContextStore extends Component{
     getAllRooms = () => {
         serverAPI.get('/rooms')
         .then((res) => {
+            console.log(res.data);
             this.setState({rooms: res.data});
         })
         .catch((err) => {console.log(err)});
@@ -41,7 +43,10 @@ export class AdminContextStore extends Component{
         this.setState({isPeerInitialized})
     }
     setSelectedRoom = selectedRoom =>{
-        this.setState({selectedRoom, currentCall: null});
+        this.setState({selectedRoom, editRoom: false, currentCall: null});
+    }
+    editSelectedRoom = selectedRoom => {
+        this.setState({selectedRoom, editRoom: true, currentCall: null})
     }
     setPeerConnection = async () => {
         await this.setState({peer: new Peer('admin', peerConfig ), isPeerInitialized: true });
@@ -100,7 +105,9 @@ export class AdminContextStore extends Component{
                 setSelectedRoom: this.setSelectedRoom,
                 setCurrentCommand: this.setCurrentCommand,
                 setCurrentCall: this.setCurrentCall,
-                hangCurrentCall: this.hangCurrentCall
+                hangCurrentCall: this.hangCurrentCall,
+                editSelectedRoom: this.editSelectedRoom,
+                getAllRooms: this.getAllRooms
                 }}>
                 {this.props.children}
             </Context.Provider>

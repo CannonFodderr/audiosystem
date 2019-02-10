@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const Room = require('../models/Room');
+const User = require('../models/User');
+const Book = require('../models/Books');
 const {isLoggedIn, isAdmin} = require('../middleware/auth');
 const passport = require('passport');
 const fs = require('fs');
@@ -18,8 +20,8 @@ router.post('/logout', (req, res) => {
 
 // ROOMS
 // Get all rooms
-router.get('/rooms', isAdmin, (req, res) => {
-    Room.find()
+router.get('/rooms', isLoggedIn, (req, res) => {
+    Room.find().populate('currentUser').populate('currentBook').exec()
     .then((allRooms) => {
         res.json(allRooms);
     });
@@ -34,6 +36,51 @@ router.get('/rooms/:roomId', isLoggedIn, (req, res) => {
     .catch(err => {
         console.log(err)
     })
+});
+router.put(`/rooms/:roomId`, isLoggedIn, (req, res) => {
+    console.log("Got room update request:", req.params.roomId, req.body);
+    Room.findOneAndUpdate({_id: req.params.roomId}, req.body)
+    .then(updatedRoom => {
+        updatedRoom.save();
+        console.log(updatedRoom);
+        res.json(updatedRoom);
+    })
+    .catch(err => console.log(err));
+})
+
+// USER
+router.get('/users', isLoggedIn, (req, res) =>{
+    User.find()
+    .then(allUsers => {
+        res.json(allUsers)
+    })
+    .catch(err => console.log(err));
+});
+// Find user by id
+router.get('/users/:userId', (req, res) => {
+    User.findById(req.params.userId)
+    .then(foundUser => {
+        res.json(foundUser)
+    })
+    .catch(err => console.log(err));
+});
+
+// BOOKS
+router.get('/books', isLoggedIn, (req, res) =>{
+    Book.find()
+    .then(allBooks => {
+        res.json(allBooks)
+    })
+    .catch(err => console.log(err));
+});
+
+// Find book by id
+router.get('/books/:bookId', (req, res) => {
+    Book.findById(req.params.userId)
+    .then(foundBook => {
+        res.json(foundBook)
+    })
+    .catch(err => console.log(err));
 });
 
 

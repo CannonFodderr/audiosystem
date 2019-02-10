@@ -233,7 +233,7 @@ class RoomControls extends React.Component{
         this.context.peer.on('connection', (conn) => {
             console.log("GOT CONNTECTION!")
             conn.on('data', (data) => {
-                console.log(data);
+                // console.log(data);
                 if(data.cmd === "update"){
                     userMicGainSlider.value = data.micGain * 100;
                     userPlayerGainSlider.value = data.playerGain * 100;

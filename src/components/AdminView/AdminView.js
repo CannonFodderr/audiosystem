@@ -2,13 +2,16 @@ import React from 'react';
 import RoomList from '../RoomList/RoomList';
 import RoomControls from '../RoomControls/RoomControls';
 import adminContext from '../../contexts/adminContext';
+import RoomEdit from '../RoomEdit/RoomEdit';
 
 class AdminView extends React.Component{
-    renderRoomControls = () => {
+    renderRoomControlsOrEdit = () => {
         if(!this.context.selectedRoom || !this.context.onlineRooms.includes(this.context.selectedRoom.username)){
             return <div></div>
+        } else if(this.context.selectedRoom && this.context.editRoom){
+            return <RoomEdit />
         } else {
-            return <RoomControls room={this.context.selectedRoom} />
+            return <RoomControls />
         }
     }
     render(){
@@ -16,7 +19,7 @@ class AdminView extends React.Component{
             <div>
                 <h1>ADMIN VIEW</h1>
                 <RoomList />
-                {this.renderRoomControls()}
+                {this.renderRoomControlsOrEdit()}
             </div>
         )
     }
