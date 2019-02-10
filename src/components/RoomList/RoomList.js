@@ -51,7 +51,6 @@ class RoomList extends Component{
         return (
             <Card.Group>
                 {this.context.rooms.map((room, index) => {
-                    // console.log(room);
                     let color = this.setStatusIconColor(room)
                     if(room.isAdmin === true){
                         return
