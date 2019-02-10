@@ -98,7 +98,7 @@ class RoomEdit extends Component{
         return(
             <Container>
                 <Segment inverted>
-                    <h4>Room Edit</h4>
+                    <h2>Edit: {this.context.selectedRoom.username}</h2>
                     <h4>Select User</h4>
                     <select onChange={(e) => { 
                         this.setState({ currentUser: e.target.selectedOptions[0].id})}}>
