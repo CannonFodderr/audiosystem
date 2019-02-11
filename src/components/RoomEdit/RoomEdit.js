@@ -40,6 +40,19 @@ class RoomEdit extends Component{
             })
         }
     }
+    renderBookParts = () => {
+        if(!this.context.selectedRoom){
+            return;
+        } else if(!this.context.selectedRoom.currentBook){
+            return <option>Please select a book</option>
+        } else if (this.context.selectedRoom.currentBook.parts.length <= 0){
+            return <option>No files in folder</option>
+        } else {
+            return this.context.selectedRoom.currentBook.parts.map((part, index) => {
+                return <option key={index}>{part}</option>
+            })
+        }
+    }
     requestUsersList = () => {
         serverAPI.get('/users')
         .then((res) => {
@@ -92,8 +105,15 @@ class RoomEdit extends Component{
             return <option id={this.context.selectedRoom.currentBook._id}>Keep Current Book</option>
         }
     }
+    renderCurrentPartOption = () => {
+        if(!this.context.selectedRoom.currentPart){
+            return <option id={null}>Select</option>
+        } else {
+            return <option id={this.context.selectedRoom.currentPart}>Keep Current Part</option>
+        }
+    }
     render(){
-        // console.log(this.state);
+        console.log(this.state);
         return(
             <Container>
                 <Segment inverted>
@@ -109,6 +129,12 @@ class RoomEdit extends Component{
                         this.setState({currentBook: e.target.selectedOptions[0].id})}}>
                         {this.renderCurrentBookOption()}
                         {this.renderBookSelection()}
+                    </select>
+                    <h4>Select File</h4>
+                    <select onChange={(e) => { 
+                        this.setState({currentPart: e.target.selectedOptions[0].value})}}>
+                        {this.renderCurrentPartOption()}
+                        {this.renderBookParts()}
                     </select>
                     <hr />
                     <Button primary onClick={() => this.updateCurrentRoomData()}>Change</Button>

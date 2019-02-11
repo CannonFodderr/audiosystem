@@ -4,7 +4,7 @@ import {Modal, Header, Button, Icon, Segment} from 'semantic-ui-react';
 class ModalTemplate extends Component{
     renderTriggerButton = () => {
         return (
-            <div style={{width:"100vw", height:"100vh", background:"#000"}}>
+            <div style={{width:"100vw", height:"100vh", background:"rgb(27, 28, 29)"}}>
             <Segment size="massive" inverted>
                 <Button color size="massive" inverted>
                     <Icon.Group size="massive">

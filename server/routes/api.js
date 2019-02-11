@@ -37,7 +37,8 @@ router.get('/rooms/:roomId', isLoggedIn, (req, res) => {
         console.log(err)
     })
 });
-router.put(`/rooms/:roomId`, isAdmin, (req, res) => {
+router.put(`/rooms/:roomId`, isLoggedIn, (req, res) => {
+    console.log(req.body);
     Room.findOneAndUpdate({_id: req.params.roomId}, req.body)
     .then(updatedRoom => {
         updatedRoom.save();
@@ -47,7 +48,7 @@ router.put(`/rooms/:roomId`, isAdmin, (req, res) => {
 })
 
 // USER
-router.get('/users', isAdmin, (req, res) =>{
+router.get('/users', isLoggedIn, (req, res) =>{
     User.find()
     .then(allUsers => {
         res.json(allUsers)
@@ -83,35 +84,44 @@ router.get('/books/:bookId', (req, res) => {
 
 
 router.get('/audio', (req, res) => {
-    console.log("Get file request")
-        const path = `server/public/test.mp3`;
-        const state = fs.statSync(path);
-        const fileSize = state.size;
-        const range = req.headers.range;
-        if(range){
-            const parts = range.replace(/bytes=/, "").split("-");
-            const start = parseInt(parts[0], 10);
-            const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-            const chunkSize = (end-start)+1;
-            const file = fs.createReadStream(path, {start, end});
-            const head = {
-                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-                'Accept-Ranges': 'bytes',
-                'Content-Length': chunkSize,
-                'Content-Type': 'audio/mp3',
+    console.log("Get file request from:", req.user);
+        Room.findById(req.user._id).populate('currentBook').populate('currentUser').exec().then((foundRoom) => {
+            if(!foundRoom.currentBook.name || !foundRoom.currentPart){
+                console.log("Missing path data")
+                res.send("missin data")
+            } else {
+                // SEND FILE TO ROOM
+                const path = `server/assets/books/${foundRoom.currentBook.name}/${foundRoom.currentPart}`;
+                const state = fs.statSync(path);
+                const fileSize = state.size;
+                const range = req.headers.range;
+                if(range){
+                    const parts = range.replace(/bytes=/, "").split("-");
+                    const start = parseInt(parts[0], 10);
+                    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+                    const chunkSize = (end-start)+1;
+                    const file = fs.createReadStream(path, {start, end});
+                    const head = {
+                        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                        'Accept-Ranges': 'bytes',
+                        'Content-Length': chunkSize,
+                        'Content-Type': 'audio/mp3',
+                    }
+                    console.log("Streaming...")
+                    res.writeHead(206, head);
+                    file.pipe(res);
+                }else{
+                    const head = {
+                        'Content-Length': fileSize,
+                        'Content-Type': 'audio/mp3',
+                    }
+                    console.log("Streaming first part")
+                    res.writeHead(200, head)
+                    fs.createReadStream(path).pipe(res)
+                }
             }
-            console.log("Streaming...")
-            res.writeHead(206, head);
-            file.pipe(res);
-        }else{
-            const head = {
-                'Content-Length': fileSize,
-                'Content-Type': 'audio/mp3',
-            }
-            console.log("Streaming first part")
-            res.writeHead(200, head)
-            fs.createReadStream(path).pipe(res)
-        }
+        })
+        
 });
 
 module.exports = router;

@@ -70,4 +70,4 @@ peerserver.on('disconnect', (id) => {
 app.use('/peerjs', peerserver);
 
 
-// require('./db/seed');
+require('./db/seed');

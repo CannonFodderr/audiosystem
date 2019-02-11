@@ -24,7 +24,7 @@ class RoomList extends Component{
         if(!room.currentBook){
             return <Card.Description></Card.Description>
         } else {
-            return <Card.Description as='a'><Icon  name='book' /> {room.currentBook.name}</Card.Description>
+            return <Card.Description as='a'><Icon  name='book' /> {room.currentBook.name} <hr /> <Icon name="file audio" /> { room.currentPart }</Card.Description>
         }
         
     }
