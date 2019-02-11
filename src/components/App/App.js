@@ -5,6 +5,7 @@ import appContext from '../../contexts/appContext';
 import UserView from '../UserView/UserView';
 import AdminView from '../AdminView/AdminView';
 import {AdminContextStore} from '../../contexts/adminContext';
+import {UserContextStore} from '../../contexts/userContext';
 
 class App extends Component{
     renderApp = () => {
@@ -17,7 +18,11 @@ class App extends Component{
         }
         if(this.context.room.isAdmin === false){
             return (
-                <div><UserView room={this.context.room}/></div>
+                <div>
+                    <UserContextStore>
+                    <UserView room={this.context.room}/>
+                    </UserContextStore>
+                </div>
             )
         }
         if(this.context.room.isAdmin === true){

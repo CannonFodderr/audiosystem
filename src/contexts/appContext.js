@@ -4,7 +4,6 @@ const Context = React.createContext();
 
 export class AppContextStore extends Component{
     state = {
-        temp: "Hello from context",
         room: null
     }
     setRoom = room => {

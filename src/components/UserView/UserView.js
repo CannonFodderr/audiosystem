@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import {Button} from 'semantic-ui-react';
+import {serverAPI} from '../../api/api';
+import userContext from '../../contexts/userContext';
+
 const Peer = window.Peer;
 
 
@@ -16,16 +19,13 @@ class UserView extends Component{
         )
     }
     componentDidMount(){
-        const pitchFinderScript = document.createElement("script");
-        pitchFinderScript.src = "/pitchFinder.js";
-        pitchFinderScript.async = true;
-        document.body.appendChild(pitchFinderScript);
-        const userScript = document.createElement("script");
-        userScript.src = "/user.js";
-        userScript.async = true;
-        document.body.appendChild(userScript);
+        let startctx = document.getElementById('startctx');
+        startctx.addEventListener('click', () => {
+            this.context.initUserPlayback(document.getElementById('userPlayer'))
+        })
     }
     render(){
+        console.log(this.context);
         return(
             <div>
                 <h1 id="room-title">{this.props.room.username}</h1>
@@ -37,5 +37,6 @@ class UserView extends Component{
     }
 }
 
+UserView.contextType = userContext;
 export default UserView;
 
