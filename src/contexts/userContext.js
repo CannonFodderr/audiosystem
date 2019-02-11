@@ -39,6 +39,7 @@ const INITIAL_STATE = {
     playerGainValue: null,
     analyser: null,
     dataArray: null,
+    pitchArr: [],
     detectPitch: pitchFinder.YIN(),
     isOscActive: true,
     isOscPlaying: false,
@@ -235,15 +236,16 @@ export class UserContextStore extends Component{
         let dataArray = new Uint8Array(this.state.analyser.fftSize)
         this.state.analyser.getByteTimeDomainData(dataArray);
         // Detect pitch and push to array;
-        let pitchArr = [];
         let pitch = this.state.detectPitch(dataArray, { sampleRate: 48000});
-        pitchArr.push(pitch);
-        if(pitchArr.length > 2){
-            pitchArr.shift()
+        console.log(this.state.pitchArr, pitch);
+        this.setState({pitchArr: [...this.state.pitchArr, pitch]})
+        if(this.state.pitchArr.length > 2){
+            let shiftedArr = this.state.pitchArr.shift();
+            this.setState({pitchArr: shiftedArr});
         }
         // Pervent overloading the oscillator
-        if(this.state.isOscActive && !this.state.isOscPlaying && pitchArr[1] && pitchArr[1] !== pitchArr[0]){
-            this.playOsc(pitchArr[1])
+        if(this.state.isOscActive && !this.state.isOscPlaying && this.state.pitchArr[1] && this.state.pitchArr[1] !== this.state.pitchArr[0]){
+            this.playOsc(this.state.pitchArr[1])
         }
         requestAnimationFrame(this.pitchDetector)
     }
@@ -271,7 +273,6 @@ export class UserContextStore extends Component{
         .catch(err => {console.log(err)})
     }
     render(){
-        console.log(this.state);
         return(
             <Context.Provider value={{
                 ...this.state,

@@ -8,15 +8,22 @@ const Peer = window.Peer;
 
 class UserView extends Component{
     renderView = () => {
-        return(
-            <div>
-                <Button id="startctx" content="Start" />
+        let room = this.props.room;
+        if(!room || !room.currentUser || !room.currentBook || !room.currentPart ){
+            return (
+                <Button id="refresh" content="Reload" negative size="massive"/>
+            )
+        } else {
+            return(
+                <div>
+                <Button id="startctx" content="Ready" positive size="massive"/>
                 <div>
                     <audio src="/api/audio" id="userPlayer" crossorigin="anonymous"></audio>
                     <audio id="adminMicPlayer" crossorigin="anonymous"></audio>
                 </div>
             </div>
-        )
+            )
+        }
     }
     componentDidMount(){
         let startctx = document.getElementById('startctx');
