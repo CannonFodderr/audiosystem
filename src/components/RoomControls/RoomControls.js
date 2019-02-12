@@ -143,13 +143,6 @@ class RoomControls extends React.Component{
     }
     setupControlsListeners = () => {
         oscActive.addEventListener('change', (e) => {
-            if(e.target.value === "on"){
-                oscActive.setAttribute('value', "off");
-            } else {
-                oscActive.setAttribute('value', "on");
-            }
-            console.log(e);
-            console.log(e.target.checked);
             this.context.currentConnection.send({cmd: "osc state", value: e.target.checked});
         })
         oscGain.addEventListener('change', (e) => {

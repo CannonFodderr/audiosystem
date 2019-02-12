@@ -31,7 +31,6 @@ export class AdminContextStore extends Component{
     getAllRooms = () => {
         serverAPI.get('/rooms')
         .then((res) => {
-            console.log(res.data);
             this.setState({rooms: res.data});
         })
         .catch((err) => {console.log(err)});

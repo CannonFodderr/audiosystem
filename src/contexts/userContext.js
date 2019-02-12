@@ -218,13 +218,9 @@ export class UserContextStore extends Component{
         }
         call.answer(streamToAdmin.stream)
         call.on('stream', (adminStream) => {
-            console.log("Got stream from admin...", adminStream);
             let adminMicPlayer = document.getElementById('adminMicPlayer');
             adminMicPlayer.srcObject= adminStream;
             adminMicPlayer.play()
-            console.log(adminMicPlayer);
-            // let adminTBSource = ctx.createMediaStreamSource(adminStream);
-            // adminStream.connect(ctx.destination);
         });
     }
     pitchDetector = () => {
@@ -269,7 +265,7 @@ export class UserContextStore extends Component{
     componentDidMount() {
         this.setPeerConnection()
         .then(() => {
-            console.log(this.state.peer)
+            console.log("Peer initialized")
         })
         .catch(err => {console.log(err)})
     }

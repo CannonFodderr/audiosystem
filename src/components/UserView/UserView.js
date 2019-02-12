@@ -32,7 +32,6 @@ class UserView extends Component{
         })
     }
     render(){
-        console.log(this.context);
         return(
             <div>
                 <h1 id="room-title">{this.props.room.username}</h1>

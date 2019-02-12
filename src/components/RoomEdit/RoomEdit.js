@@ -113,7 +113,6 @@ class RoomEdit extends Component{
         }
     }
     render(){
-        console.log(this.state);
         return(
             <Container>
                 <Segment inverted>
