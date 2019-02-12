@@ -4,7 +4,6 @@ const Room = require('../models/Room');
 const Book = require('../models/Books');
 const fs = require('fs');
 const path = require('path');
-// const bcryptFuncs = require('../utils/bcryptFuncs');
 
 // Create Admin and First User
 // ***************************
