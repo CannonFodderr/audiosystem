@@ -26,32 +26,77 @@ class RoomEdit extends Component{
         if(!this.state.allUsers){
             return <option>Loading Users...</option>
         } else {
-            return this.state.allUsers.map((user) => {
-                return <option id={user._id} key={user._id}>{user.firstName} {user.lastName}</option>
-            })
+            let currentUserId = "";
+            let optionContent = "";
+            if(this.context.selectedRoom && this.context.selectedRoom.currentUser){
+                let currentUser = this.context.selectedRoom.currentUser;
+                currentUserId = currentUser._id;
+                optionContent = `${currentUser.firstName} ${currentUser.lastName}`;
+            }
+            return (
+                <select onChange={(e) => { 
+                    this.setState({ currentUser: e.target.selectedOptions[0].id})}}
+                >
+                <option id={currentUserId}>{optionContent}</option>
+                {this.renderUserList()}       
+                </select>
+            )
         }
+    }
+    renderUserList = () => {
+        return this.state.allUsers.map((user) => {
+            return <option id={user._id} key={user._id}>{user.firstName} {user.lastName}</option>
+        })
     }
     renderBookSelection = () => {
         if(!this.state.allBooks){
             return <option>Loading Books Data...</option>
         } else {
-            return this.state.allBooks.map((book) => {
-                return <option id={book._id} key={book._id}>{book.name}</option>
-            })
+            let currentBookId = "";
+            let optionContent = "";
+            if(this.context.selectedRoom && this.context.selectedRoom.currentBook){
+                let currentBook = this.context.selectedRoom.currentBook;
+                currentBookId = currentBook._id;
+                optionContent = `${currentBook.name}`;
+            }
+            return (
+                <select onChange={(e) => { 
+                    this.setState({currentBook: e.target.selectedOptions[0].id})}}>
+                    <option id={currentBookId}>{optionContent}</option>
+                    {this.renderBookList()}
+                </select>
+            )
         }
     }
+    renderBookList = () => {
+        return this.state.allBooks.map((book) => {
+            return <option id={book._id} key={book._id}>{book.name}</option>
+        })
+    }
     renderBookParts = () => {
-        if(!this.context.selectedRoom){
+        if(!this.state.currentBook){
             return;
-        } else if(!this.context.selectedRoom.currentBook){
-            return <option>Please select a book</option>
-        } else if (this.context.selectedRoom.currentBook.parts.length <= 0){
-            return <option>No files in folder</option>
         } else {
-            return this.context.selectedRoom.currentBook.parts.map((part, index) => {
-                return <option key={index}>{part}</option>
-            })
+        let currentPart = ""
+        if(this.context.selectedRoom && this.context.selectedRoom.currentPart){
+            currentPart = this.context.selectedRoom.currentPart;
         }
+        return(
+            <select onChange={(e) => { 
+                this.setState({currentPart: e.target.selectedOptions[0].id})}}>
+                <option id={currentPart}>{currentPart}</option>
+                {this.renderPartsList()}
+            </select>
+            )
+        }
+    }
+    renderPartsList = () => {
+        let selectedBook = this.state.allBooks.filter(book => book._id === this.state.currentBook);
+        console.log(this.state);
+        console.log(selectedBook);
+        return selectedBook[0].parts.map((part, index) => {
+            return <option key={index}>{part}</option>
+        })
     }
     requestUsersList = () => {
         serverAPI.get('/users')
@@ -66,6 +111,18 @@ class RoomEdit extends Component{
             this.setState({allBooks: res.data})
         })
         .catch(err => console.log(err));
+    }
+    renderButtons = () =>{
+        if(this.state.currentUser && this.state.currentBook && this.state.currentPart){
+            return(
+                <div>
+                    <Button negative onClick={() => this.clearCurrentRoomData()}>Clear</Button>
+                    <Button primary onClick={() => this.updateCurrentRoomData()}>Update</Button>
+                </div>
+            )
+        } else {
+            return <Button negative onClick={() => this.clearCurrentRoomData()}>Clear</Button>
+        }
     }
     updateCurrentRoomData = () => {
         let data = {
@@ -91,53 +148,20 @@ class RoomEdit extends Component{
         this.requestUsersList();
         this.requestBooksList();
     }
-    renderCurrentUserOption = () => {
-        if(!this.context.selectedRoom.currentUser){
-            return <option id={null}>Select</option>
-        } else {
-            return <option id={this.context.selectedRoom.currentUser._id}>Keep Current User</option>
-        }
-    }
-    renderCurrentBookOption = () => {
-        if(!this.context.selectedRoom.currentBook){
-            return <option id={null}>Select</option>
-        } else {
-            return <option id={this.context.selectedRoom.currentBook._id}>Keep Current Book</option>
-        }
-    }
-    renderCurrentPartOption = () => {
-        if(!this.context.selectedRoom.currentPart){
-            return <option id={null}>Select</option>
-        } else {
-            return <option id={this.context.selectedRoom.currentPart}>Keep Current Part</option>
-        }
-    }
     render(){
+        console.log(this.context.selectedRoom);
         return(
             <Container>
                 <Segment inverted>
                     <h2>Edit: {this.context.selectedRoom.username}</h2>
                     <h4>Select User</h4>
-                    <select onChange={(e) => { 
-                        this.setState({ currentUser: e.target.selectedOptions[0].id})}}>
-                        {this.renderCurrentUserOption()}
-                        {this.renderUserSelection()}
-                    </select>
+                    {this.renderUserSelection()}
                     <h4>Select Book</h4>
-                    <select onChange={(e) => { 
-                        this.setState({currentBook: e.target.selectedOptions[0].id})}}>
-                        {this.renderCurrentBookOption()}
-                        {this.renderBookSelection()}
-                    </select>
+                    {this.renderBookSelection()}
                     <h4>Select File</h4>
-                    <select onChange={(e) => { 
-                        this.setState({currentPart: e.target.selectedOptions[0].value})}}>
-                        {this.renderCurrentPartOption()}
-                        {this.renderBookParts()}
-                    </select>
+                    {this.renderBookParts()}
                     <hr />
-                    <Button primary onClick={() => this.updateCurrentRoomData()}>Change</Button>
-                    <Button negative onClick={() => this.clearCurrentRoomData()}>Clear</Button>
+                    {this.renderButtons()}
                 </Segment>
             </Container>
         )

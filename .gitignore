@@ -2,11 +2,13 @@
 
 # dependencies
 /node_modules
+/server/assets/
 /.pnp
 .pnp.js
 server.cert
 server.key
 .env
+.mp3
 # testing
 /coverage
 
