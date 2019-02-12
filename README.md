@@ -8,11 +8,15 @@ Think about a recording studio control room with multiple recording rooms.
 This is a digital version of an analog system created to help with reading disabilities treatment
 
 #### What can it do?
-The application is in its early stages but right now it implements: 
-* One central control room (ADMIN) can connect & control and listen to many listening rooms (USERS).
+The application is in its early stages but already implements: 
+* One central *control room (ADMIN)* that can connect & control and listen to many *listening rooms (USERS)*.
+* Admin can recive many connections but send data commands only for one room at a time (While listening...)
 * WebRTC (PeerJS) - handles peer 2 peer connection for data and audio streaming connection.
 * Web Audio API is used to handle Stream to Audio Context / Audio Context  to Stream & Gain control over audio elements.
 * Node serverside API handles authentication and data fetching from mongoDB.
+* Pitch Detection - *optional* for triggering audio context oscillator over the User playback.
+* Heavy workload (Audio Context, Stream Generation & Pitch Detection )implemented on the user side to prevent overloading the admin.
+* Centrelized state managment with React Context System.
 
 *While listening to a room admin can:*
 
@@ -22,11 +26,11 @@ The application is in its early stages but right now it implements:
 * View current room playback time
 
 ## REQUIREMENTS
-
 * *UPDATED CHROME OR FIREFOX* - for Audio HTML elements stream capture
-* *GET OPEN SSL Certificate* - save as server.cert + server.key - for serving HTTPS (Required for proper audio context streams)
+* *GET OPEN SSL Certificate* - save as server.cert + server.key - for serving HTTPS (Required for proper audio context streams otherwise mose browsers will silence the output);
 * *SETUP ENV VARIABLES* - PORT, HOST, DEV_DB_URL
 * *Run* : npm install, num run build || num run start-build (with nodemon)
+* *This project runs localy* to provide service without internet connection.
 
 ## Available Scripts
 
