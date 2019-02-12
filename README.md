@@ -2,10 +2,11 @@
 #### MERN Stack, WebRTC, Audio API
 
 #### TL`DR
-Think about a recording studio control room with multiple recording rooms.
+Imagine a recording studio control room only with multiple recording rooms.
+The control room is able to monitor, talkback, control playback, volume and many other element for each room.
 
 #### Why did you create this?
-This is a digital version of an analog system created to help with reading disabilities treatment
+This is a digital version of an analog system created to help with reading disabilities treatment.
 
 #### What can it do?
 The application is in its early stages but already implements: 
