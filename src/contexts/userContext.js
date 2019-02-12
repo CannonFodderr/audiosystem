@@ -269,6 +269,14 @@ export class UserContextStore extends Component{
         })
         .catch(err => {console.log(err)})
     }
+    componentWillUnmount(){
+        if(this.state.ctx){
+            this.state.ctx.close();
+        }
+        if(this.state.peer){
+            this.state.peer.close();
+        }
+    }
     render(){
         return(
             <Context.Provider value={{

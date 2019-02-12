@@ -9,14 +9,6 @@ class LoginForm extends Component{
         password: null,
         err: null
     }
-    submitForm = loginData => {
-        serverAPI.post('/login', loginData)
-        .then((res) => {
-            if(res.data.room){
-                this.context.setRoom(res.data.room);
-            }
-        });
-    }
     validateForm = () => {
         if(!this.state.username || this.state.username.length < 3){
             return this.setState({err: "Invalid username"})
@@ -25,7 +17,7 @@ class LoginForm extends Component{
             return this.setState({err: "Invalid password"})
         }
         this.setState({err: null});
-        return this.submitForm({username: this.state.username, password: this.state.password});
+        return this.context.fetchRoomData({username: this.state.username, password: this.state.password});
     }
     setUsername = (event) => {
         this.setState({username: event.target.value})
