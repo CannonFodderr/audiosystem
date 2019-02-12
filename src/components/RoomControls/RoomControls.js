@@ -59,7 +59,7 @@ class RoomControls extends React.Component{
         return(
             <Segment inverted>
                 <h4>OSC</h4>
-                <Checkbox toggle id="oscActive" defaultChecked/>
+                <input type="checkbox" id="oscActive" value="on" defaultChecked/>
                 <input 
                 id="oscGain"
                 min={1}
@@ -143,13 +143,14 @@ class RoomControls extends React.Component{
     }
     setupControlsListeners = () => {
         oscActive.addEventListener('change', (e) => {
-            console.log("Value: ", e.target.value);
             if(e.target.value === "on"){
                 oscActive.setAttribute('value', "off");
             } else {
                 oscActive.setAttribute('value', "on");
             }
-            this.context.currentConnection.send({cmd: "osc state", value: e.target.value});
+            console.log(e);
+            console.log(e.target.checked);
+            this.context.currentConnection.send({cmd: "osc state", value: e.target.checked});
         })
         oscGain.addEventListener('change', (e) => {
             this.context.currentConnection.send({cmd: "osc gain", value: e.target.value / 10000 });
@@ -282,8 +283,8 @@ class RoomControls extends React.Component{
             <Container>
                 <Segment inverted>
                     <h1>{this.context.selectedRoom.username}</h1>
-                    {this.renderUserPlayerTime()}
                     <audio crossorigin="anonymous"></audio>
+                    {this.renderUserPlayerTime()}
                     {this.renderPlayerControls()}
                     {this.renderRoomMixControls()}
                     {this.renderOscControls()}

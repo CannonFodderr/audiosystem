@@ -35,8 +35,8 @@ const INITIAL_STATE = {
     micStreamToOutput: null,
     clonedMicStream: null,
     clonedPlayerStream: null,
-    micGainValue: null,
-    playerGainValue: null,
+    micGainValue: 0.5,
+    playerGainValue: 0.8,
     analyser: null,
     dataArray: null,
     pitchArr: [],
@@ -155,7 +155,7 @@ export class UserContextStore extends Component{
                 this.state.playerToAdminGain.gain.setValueAtTime(data.value, this.state.ctx.currentTime);
             }
             if(data.cmd === "osc state"){
-                if(data.value === "off"){
+                if(data.value === false){
                     this.setState({isOscActive: false});
                 } else {
                     this.setState({isOscActive: true});
@@ -240,8 +240,9 @@ export class UserContextStore extends Component{
         console.log(this.state.pitchArr, pitch);
         this.setState({pitchArr: [...this.state.pitchArr, pitch]})
         if(this.state.pitchArr.length > 2){
-            let shiftedArr = this.state.pitchArr.shift();
-            this.setState({pitchArr: shiftedArr});
+            let newPitchArr = this.state.pitchArr;
+            newPitchArr.shift()
+            this.setState({pitchArr: newPitchArr});
         }
         // Pervent overloading the oscillator
         if(this.state.isOscActive && !this.state.isOscPlaying && this.state.pitchArr[1] && this.state.pitchArr[1] !== this.state.pitchArr[0]){
