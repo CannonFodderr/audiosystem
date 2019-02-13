@@ -1,8 +1,27 @@
 import React, {Component} from 'react';
 import {List, Button, Card, Icon, Container} from 'semantic-ui-react';
 import adminContext from '../../contexts/adminContext';
+import RoomEdit from '../RoomEdit/RoomEdit';
+import RoomControls from '../RoomControls/RoomControls';
 
 class RoomList extends Component{
+    renderRoomControlsOrEdit = () => {
+        if(!this.context.selectedRoom){
+            return <div></div>
+        } else if(this.context.selectedRoom && this.context.editRoom){
+            return (
+                <Card.Content>
+                    <RoomEdit />
+                </Card.Content>
+            )
+        } else {
+            return (
+                <Card.Content>
+                    <RoomControls />
+                </Card.Content>
+            )
+        }
+    }
     renderCardExtraContent = (room) => {
         return(
             <Card.Content extra>
@@ -31,7 +50,7 @@ class RoomList extends Component{
     renderCardContent = (room, color) => {
         return(
             <Card.Content>
-                <Card.Header as='a'onClick={() => {this.context.setSelectedRoom(room)}}><Icon name='idea' color={color} />{room.username}</Card.Header>
+                <Card.Header as='a'onClick={() => {this.context.setSelectedRoom(room)}}><Icon name='idea' color={color} size='small'/>{room.username}</Card.Header>
                 {this.renderCardMeta(room)}
                 {this.renderCardDescription(room)}
             </Card.Content>
@@ -56,9 +75,10 @@ class RoomList extends Component{
                         return
                     } else if(this.context.selectedRoom && room.username === this.context.selectedRoom.username) {
                         return (
-                            <Card color="blue" key={index} id={room._id}>
+                            <Card color="blue" key={index} id={room._id} fluid={true}>
                                 {this.renderCardContent(room, color)}
                                 {this.renderCardExtraContent(room)}
+                                {this.renderRoomControlsOrEdit()}
                             </Card>
                         )
                     } else {

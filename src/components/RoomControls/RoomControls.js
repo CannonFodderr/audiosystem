@@ -1,5 +1,5 @@
 import React from 'react';
-import {Input, Button, Label, Checkbox, Segment, Container, Header} from 'semantic-ui-react';
+import {Input, Button, Label, Checkbox, Segment, Container, Header, ButtonGroup} from 'semantic-ui-react';
 import {Slider} from 'react-semantic-ui-range';
 import adminContext from '../../contexts/adminContext';
 const Peer = window.Peer;
@@ -41,6 +41,7 @@ class RoomControls extends React.Component{
                 step={1}
                 type='range'
                 defaultValue={50}
+                style={{width:"100%"}}
                 />
                 <h4>Sound Volume</h4>
                 <input 
@@ -51,6 +52,7 @@ class RoomControls extends React.Component{
                 step={1}
                 type='range'
                 defaultValue={70}
+                style={{width:"100%"}}
                 />
             </Segment>
         )
@@ -59,7 +61,7 @@ class RoomControls extends React.Component{
         return(
             <Segment inverted>
                 <h4>OSC</h4>
-                <input type="checkbox" id="oscActive" value="on" defaultChecked/>
+                <input type="checkbox" id="oscActive" value="on" defaultChecked />
                 <input 
                 id="oscGain"
                 min={1}
@@ -68,6 +70,7 @@ class RoomControls extends React.Component{
                 step={1}
                 type='range'
                 defaultValue={70}
+                style={{width:"100%"}}
                 />
             </Segment>
         )
@@ -76,18 +79,21 @@ class RoomControls extends React.Component{
         return (
         <Segment inverted>
             <h4>Connection</h4>
-            <Button.Group>
-                <Button icon='assistive listening systems' id="startctx" content="Listen to room" color="blue"/>
+            <Button.Group className="ui two buttons">
+                <Button icon='assistive listening systems' id="startctx" content="Listen" color="blue"/>
                 <Button icon='sign out' id="disconnect" content="disconnect" color="red"/>
-                <Button size="large" icon='microphone' id="talkback" content="Hold to talk" color="blue"/>
             </Button.Group>
+            <h4>Talkback</h4>
+            <ButtonGroup fluid>
+                <Button size="large" icon='microphone' id="talkback" content="" color="blue"/>
+            </ButtonGroup>
             <h4>Controls</h4>
-            <Button.Group>
-                <Button icon='play' content='Play' id="startUserPlayer"/>
-                <Button icon='pause' content='Pause' id="pauseUserPlayer"/>
-                <Button icon='Shuffle' content='Stop' id="stopUserPlayer"/>
-                <Button icon='fast backward' content='-30' id="rewind"/>
-                <Button icon='fast forward' content='+30' id="fforward"/>
+            <Button.Group className="ui five buttons">
+                <Button icon='play' content='' id="startUserPlayer"/>
+                <Button icon='pause' content='' id="pauseUserPlayer"/>
+                <Button icon='stop' content='' id="stopUserPlayer"/>
+                <Button icon='fast backward' content='' id="rewind"/>
+                <Button icon='fast forward' content='' id="fforward"/>
             </Button.Group>
         </Segment>
         )
@@ -273,16 +279,14 @@ class RoomControls extends React.Component{
             this.endCurrentCall();
         }
         return(
-            <Container>
-                <Segment inverted>
-                    <h1>{this.context.selectedRoom.username}</h1>
-                    <audio crossorigin="anonymous"></audio>
-                    {this.renderUserPlayerTime()}
-                    {this.renderPlayerControls()}
-                    {this.renderRoomMixControls()}
-                    {this.renderOscControls()}
-                </Segment>
-            </Container>
+            <Segment inverted>
+                <h1>{this.context.selectedRoom.username}</h1>
+                <audio crossorigin="anonymous"></audio>
+                {this.renderUserPlayerTime()}
+                {this.renderPlayerControls()}
+                {this.renderRoomMixControls()}
+                {this.renderOscControls()}
+            </Segment>
         )
     }
 }

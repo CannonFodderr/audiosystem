@@ -91,12 +91,12 @@ class RoomEdit extends Component{
         }
     }
     renderPartsList = () => {
-        let selectedBook = this.state.allBooks.filter(book => book._id === this.state.currentBook);
-        console.log(this.state);
-        console.log(selectedBook);
-        return selectedBook[0].parts.map((part, index) => {
-            return <option key={index}>{part}</option>
-        })
+        if(this.state.allBooks){
+            let selectedBook = this.state.allBooks.filter(book => book._id === this.state.currentBook);
+            return selectedBook[0].parts.map((part, index) => {
+                return <option key={index} id={part}>{part}</option>
+            })
+        }
     }
     requestUsersList = () => {
         serverAPI.get('/users')
@@ -144,26 +144,35 @@ class RoomEdit extends Component{
         })
         this.updateCurrentRoomData();
     }
+    setCurrentState = () => {
+        let selectedRoom = this.context.selectedRoom;
+        if(!selectedRoom){
+            return;
+        } else{
+            let currentUser = selectedRoom.currentUser ? selectedRoom.currentUser._id : null;
+            let currentBook = selectedRoom.currentBook ? selectedRoom.currentBook._id : null;
+            let currentPart = selectedRoom.currentPart ? selectedRoom.currentPart : null;
+            this.setState({currentUser, currentBook, currentPart});
+        }
+    }
     componentDidMount(){
         this.requestUsersList();
         this.requestBooksList();
+        this.setCurrentState();
     }
     render(){
-        console.log(this.context.selectedRoom);
         return(
-            <Container>
-                <Segment inverted>
-                    <h2>Edit: {this.context.selectedRoom.username}</h2>
-                    <h4>Select User</h4>
-                    {this.renderUserSelection()}
-                    <h4>Select Book</h4>
-                    {this.renderBookSelection()}
-                    <h4>Select File</h4>
-                    {this.renderBookParts()}
-                    <hr />
-                    {this.renderButtons()}
-                </Segment>
-            </Container>
+            <Segment inverted>
+                <h2>Edit: {this.context.selectedRoom.username}</h2>
+                <h4>Select User</h4>
+                {this.renderUserSelection()}
+                <h4>Select Book</h4>
+                {this.renderBookSelection()}
+                <h4>Select File</h4>
+                {this.renderBookParts()}
+                <hr />
+                {this.renderButtons()}
+            </Segment>
         )
     }
 }
