@@ -11,11 +11,11 @@ let disconnectButton;
 let adminPlayer;
 let talkBackButton;
 let userMicGainSlider;
+let timeDisplay;
 let userPlayerGainSlider;
 let startUserPlayerBtn;
 let pauseUserPlayerBtn;
 let stopUserPlayerBtn;
-let timeDisplay;
 let rewind 
 let fforward;
 let oscActive;
@@ -39,7 +39,7 @@ class RoomControls extends React.Component{
                 name='micGain'
                 step={1}
                 type='range'
-                defaultValue={50}
+                defaultValue={this.context.userMicGainSlider}
                 style={{width:"100%"}}
                 />
                 <h4>Sound Volume</h4>
@@ -50,7 +50,7 @@ class RoomControls extends React.Component{
                 name='playerGain'
                 step={1}
                 type='range'
-                defaultValue={70}
+                defaultValue={this.context.userPlayerGainSlider}
                 style={{width:"100%"}}
                 />
             </Segment>
@@ -197,7 +197,7 @@ class RoomControls extends React.Component{
         })
     }
     setupAdminMic = async () => {
-        ctx = await new AudioContext();
+        ctx = await new(window.AudioContext || window.webkitAudioContext)();
         await navigator.mediaDevices.getUserMedia({audio: true})
             .then((micStream) => {
             outputToUser = ctx.createMediaStreamDestination();
@@ -211,7 +211,6 @@ class RoomControls extends React.Component{
     }
     callToUser = async () => {
         this.setState({call: this.context.peer.call(this.context.selectedRoom.username, outputToUser.stream)});
-        console.log(this.state.call);
         disconnectButton.addEventListener('click', () => {
             this.endCurrentCall();
         });
@@ -226,30 +225,13 @@ class RoomControls extends React.Component{
             console.log(err);
         });
     }
-    handlePeerData = () => {
-        this.context.peer.on('connection', (conn) => {
-            console.log("GOT CONNTECTION!")
-            conn.on('data', (data) => {
-                // console.log(data);
-                if(data.cmd === "update"){
-                    userMicGainSlider.value = data.micGain * 100;
-                    userPlayerGainSlider.value = data.playerGain * 100;
-                }
-                // if(data.cmd === "user answered"){
-                //     console.log(conn)
-                //     this.context.setCurrentConnection(conn)
-                // }
-            });
-        });
-    }
     componentDidMount(){
             this.initUiElements();
             this.initAudioContext();
             this.setupControlsListeners();
-            this.handlePeerData();
     }
     renderUserPlayerTime = () => {
-        if(this.context.connData.playerTime){
+        if(this.context.connData && this.context.connData.playerTime){
             let min = Math.floor(this.context.connData.playerTime / 60)
             let sec = Math.round(this.context.connData.playerTime - min * 60);
             let timeString = `${min}:${sec}`;
@@ -273,6 +255,11 @@ class RoomControls extends React.Component{
         if(this.state.call){
             console.log("Call Ended...");
             this.state.call.close();
+            if(ctx){
+                ctx.close().then(() => {
+                    ctx = null;
+                })
+            }
             this.disableUiElements();
             this.setState({call: null});
             this.context.setCurrentCall(null);

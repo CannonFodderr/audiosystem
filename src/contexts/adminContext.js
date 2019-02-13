@@ -21,6 +21,9 @@ const INITIAL_STATE = {
     currentConnection: null,
     currentCall: null,
     connData: {},
+    userMicGainSlider: 50,
+    userPlayerGainSlider: 70
+
 }
 
 export class AdminContextStore extends Component{
@@ -82,7 +85,7 @@ export class AdminContextStore extends Component{
                 });
                 conn.on('data', (data) => {
                     if(data.cmd ==="update"){
-                        this.setState({connData: data})
+                        this.setState({connData: data, userMicGainSlider: data.micGain * 100, userPlayerGainSlider: data.playerGain * 100});
                     }
                     if(data.cmd === "user answered"){
                         this.setCurrentConnection(conn)

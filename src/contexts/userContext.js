@@ -48,6 +48,7 @@ export class UserContextStore extends Component{
         this.pitchArr = [];
         this.detectPitch = pitchFinder.YIN();
         this.updateAdminTimer = null;
+        this.adminMicPlayer = null;
     }
     setPeerConnection = async () => {
         await this.setState({peer: new Peer(this.context.room.username, peerConfig ), isPeerInitialized: true });
@@ -114,10 +115,7 @@ export class UserContextStore extends Component{
             this.setState({isOnline: false})
             console.log("Admin Disconnected")
             clearInterval(this.updateAdminTimer);
-            this.updateAdminTimer = null;
-            // if(!this.state.isAdminConnected){
-            //     reconnect();
-            // }            
+            this.updateAdminTimer = null;         
         });
         conn.on('data', (data) => {
             if(this.state.isAdminConnected){
@@ -170,27 +168,16 @@ export class UserContextStore extends Component{
             }
             this.state.peer.on('call', (call) => {
                 console.log("Got call from admin");
-                const updateAdminUi = () => {
-                    if(this.state.isAdminConnected){
-                        conn.send({
-                            cmd: "update" ,
-                            micGain: this.state.micGainValue, 
-                            playerGain: this.state.playerGainValue, 
-                            isPlaying: this.state.isPlaying, 
-                            playerTime: this.userPlayer.currentTime, 
-                            isAdminConnected: this.state.isAdminConnected,
-                            isOnline: this.state.isOnline
-                        });
-                    }
-                }
-                this.updateAdminTimer = setInterval(() => {
-                    updateAdminUi()
-                }, 1000);
-                this.createStreamToAdmin(call)
+                
+                this.createStreamToAdmin(call, conn)
                 call.on('close', () => {
                     console.log("CALL ENDED");
                     clearInterval(this.updateAdminTimer);
-                    this.setState({isAdminConnected: false, updateAdminTimer: null});
+                    if(this.adminMicPlayer){
+                        this.adminMicPlayer.pause();
+                        this.adminMicPlayer.currentTime = 0;
+                    }
+                    this.setState({isAdminConnected: false, updateAdminTimer: null, adminMicPlayer: null});
                 })
                 call.on('error', () => {
                     console.log("CALL ENDED ON ERROR");
@@ -202,7 +189,7 @@ export class UserContextStore extends Component{
         });
         
     }
-    createStreamToAdmin = async (call) => {
+    createStreamToAdmin = async (call, conn) => {
         await this.setState({clonedMicStream: this.state.micStream.clone(), clonedPlayerStream: this.state.playerStream.clone()})
         let streamToAdmin = this.ctx.createMediaStreamDestination();
         let micStreamToAdmin = this.ctx.createMediaStreamSource(this.state.clonedMicStream);
@@ -227,17 +214,28 @@ export class UserContextStore extends Component{
         }
         call.answer(streamToAdmin.stream)
         call.on('stream', (adminStream) => {
-            let adminMicPlayer = document.getElementById('adminMicPlayer');
-            adminMicPlayer.srcObject= adminStream;
-            adminMicPlayer.play()
+            this.adminMicPlayer = document.getElementById('adminMicPlayer');
+            this.adminMicPlayer.srcObject= adminStream;
+            this.adminMicPlayer.play()
         });
-        call.on('close', () => {
-            console.log("CALL ENDED BY ADMIN");
-            this.setState({isAdminConnected: false});
-        });
+        const updateAdminUi = () => {
+            if(this.state.isAdminConnected){
+                conn.send({
+                    cmd: "update" ,
+                    micGain: this.state.micGainValue, 
+                    playerGain: this.state.playerGainValue, 
+                    isPlaying: this.state.isPlaying, 
+                    playerTime: this.userPlayer.currentTime, 
+                    isAdminConnected: this.state.isAdminConnected,
+                    isOnline: this.state.isOnline
+                });
+            }
+        }
+        this.updateAdminTimer = setInterval(() => {
+            updateAdminUi()
+        }, 1000);
     }
     pitchDetector = () => {
-        console.log("Start Pitch Detector")
         if(!this.state.isPlaying){
             return;
         }
