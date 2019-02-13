@@ -18,7 +18,7 @@ class UserView extends Component{
                 />
             )
         } else {
-            let isDisabled = this.context.isAdminConnected ? true : false;
+            let isDisabled = this.context.isOnline ? true : false;
             let content = isDisabled ? <Icon name="headphones" /> : 'Ready'
             return(
                 <div>

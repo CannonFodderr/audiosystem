@@ -42,7 +42,11 @@ export class AdminContextStore extends Component{
         this.setState({isPeerInitialized})
     }
     setSelectedRoom = selectedRoom =>{
-        this.setState({selectedRoom, editRoom: false, currentCall: null});
+        this.setState({selectedRoom, editRoom: false, currentCall: null, currentConnection: null, connData: null});
+    }
+    setCurrentConnection = currentConnection => {
+        console.log("SET NEW CONNECTION");
+        this.setState({currentConnection});
     }
     editSelectedRoom = selectedRoom => {
         this.setState({selectedRoom, editRoom: true, currentCall: null})
@@ -61,8 +65,7 @@ export class AdminContextStore extends Component{
     hangCurrentCall = () => {
         if(this.state.currentCall){
             console.log("HANGING UP CURRENT CALL");
-            // this.state.currentCall.close();
-            // this.setState({currentCall: null});
+            this.setState({currentCall: null});
         }
     }
     componentDidMount(){
@@ -78,13 +81,11 @@ export class AdminContextStore extends Component{
                     this.setOnlineRooms(newOnlineRoomsList);
                 });
                 conn.on('data', (data) => {
-                    if(this.state.selectedRoom && conn.peer === this.state.selectedRoom.username){
-                        if(this.state.currentConnection !== conn.peer){
-                            this.setState({currentConnection: conn});
-                            if(data.cmd ==="update"){
-                                this.setState({connData: data})
-                            }
-                        }
+                    if(data.cmd ==="update"){
+                        this.setState({connData: data})
+                    }
+                    if(data.cmd === "user answered"){
+                        this.setCurrentConnection(conn)
                     }
                 });
             })
@@ -102,6 +103,7 @@ export class AdminContextStore extends Component{
                 ...this.state,
                 setPeerInitialized: this.setPeerInitialized,
                 setSelectedRoom: this.setSelectedRoom,
+                setCurrentConnection: this.setCurrentConnection,
                 setCurrentCommand: this.setCurrentCommand,
                 setCurrentCall: this.setCurrentCall,
                 hangCurrentCall: this.hangCurrentCall,

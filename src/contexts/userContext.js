@@ -16,6 +16,7 @@ const peerConfig = {
 }
 
 const INITIAL_STATE = {
+    isOnline: false,
     peer: null,
     isPeerInitialized: false,
     isAdminConnected: false,
@@ -100,19 +101,17 @@ export class UserContextStore extends Component{
         })
         .catch((err) => console.error(err));
     }
-    setupConnection = () =>{
-        let conn = this.state.peer.connect('admin', {serialization: "json"});
-        if(!conn){
-            if(window.confirm("Unable to connect reload page?")){
-                window.location.reload();
-            }
-        }
+    setupConnection = async () =>{
+        let conn = await this.state.peer.connect('admin', {serialization: "json"});
+        this.setState({isOnline: true})
         conn.on('open', () => {
-            this.setState({isAdminConnected: true})
             conn.send({cmd: "user online"});
         });
+        conn.on('admin disconnect', () => {
+            console.log("Admin disconnected");
+        })
         conn.on('close', () => {
-            this.setState({isAdminConnected: false})
+            this.setState({isOnline: false})
             console.log("Admin Disconnected")
             clearInterval(this.updateAdminTimer);
             this.updateAdminTimer = null;
@@ -121,71 +120,87 @@ export class UserContextStore extends Component{
             // }            
         });
         conn.on('data', (data) => {
-            const updateAdminUi = () => {
-                conn.send({
-                    cmd: "update" ,
-                    micGain: this.state.micGainValue, 
-                    playerGain: this.state.playerGainValue, 
-                    isPlaying: this.state.isPlaying, 
-                    playerTime: this.userPlayer.currentTime, 
-                    isAdminConnected: this.state.isAdminConnected 
-                });
+            if(this.state.isAdminConnected){
+                if(data.cmd === "admin connect"){
+                    console.log("Admin Connected");
+                }
+                if(data.cmd === "mic gain"){
+                    this.setState({micGainValue: data.value})
+                    this.micGain.gain.setValueAtTime(data.value, this.ctx.currentTime);
+                    this.micToAdminGain.gain.setValueAtTime(data.value, this.ctx.currentTime);
+                }
+                if(data.cmd === "player gain"){
+                    this.setState({playerGainValue: data.value})
+                    this.playerGain.gain.setValueAtTime(data.value, this.ctx.currentTime);
+                    this.playerToAdminGain.gain.setValueAtTime(data.value, this.ctx.currentTime);
+                }
+                if(data.cmd === "osc state"){
+                    if(data.value === false){
+                        this.setState({isOscActive: false});
+                    } else {
+                        this.setState({isOscActive: true});
+                    };
+                }
+                if(data.cmd === "osc gain"){
+                    this.setState({oscGainValue: data.value})
+                }
+                if(data.cmd === "player start"){
+                    this.userPlayer.play();
+                    this.setState({isPlaying: true})
+                    this.pitchDetector();
+                }
+                if(data.cmd === "player pause"){
+                    this.setState({isPlaying: false});
+                    this.userPlayer.pause();
+                }
+                if(data.cmd === "player stop"){
+                    this.setState({isPlaying: false})
+                    this.userPlayer.currentTime = 0;
+                    this.userPlayer.pause();
+                }
+                if(data.cmd === "rewind"){
+                    let newTransportPosition = this.userPlayer.currentTime - 30 > 0 ? this.userPlayer.currentTime - 30 : 0;
+                    this.userPlayer.currentTime = newTransportPosition;
+                }
+                if(data.cmd === "fforward"){
+                    let maxDuration = this.userPlayer.duration;
+                    let newTransportPosition = this.userPlayer.currentTime + 30 < maxDuration ? this.userPlayer.currentTime + 30 : maxDuration;
+                    this.userPlayer.currentTime = newTransportPosition;
+                }
             }
-            if(data.cmd === "admin connect"){
-                console.log("Admin Connected");
+            this.state.peer.on('call', (call) => {
+                console.log("Got call from admin");
+                const updateAdminUi = () => {
+                    if(this.state.isAdminConnected){
+                        conn.send({
+                            cmd: "update" ,
+                            micGain: this.state.micGainValue, 
+                            playerGain: this.state.playerGainValue, 
+                            isPlaying: this.state.isPlaying, 
+                            playerTime: this.userPlayer.currentTime, 
+                            isAdminConnected: this.state.isAdminConnected,
+                            isOnline: this.state.isOnline
+                        });
+                    }
+                }
                 this.updateAdminTimer = setInterval(() => {
                     updateAdminUi()
                 }, 1000);
-            }
-            if(data.cmd === "mic gain"){
-                this.setState({micGainValue: data.value})
-                this.micGain.gain.setValueAtTime(data.value, this.ctx.currentTime);
-                this.micToAdminGain.gain.setValueAtTime(data.value, this.ctx.currentTime);
-            }
-            if(data.cmd === "player gain"){
-                this.setState({playerGainValue: data.value})
-                this.playerGain.gain.setValueAtTime(data.value, this.ctx.currentTime);
-                this.playerToAdminGain.gain.setValueAtTime(data.value, this.ctx.currentTime);
-            }
-            if(data.cmd === "osc state"){
-                if(data.value === false){
-                    this.setState({isOscActive: false});
-                } else {
-                    this.setState({isOscActive: true});
-                };
-            }
-            if(data.cmd === "osc gain"){
-                this.setState({oscGainValue: data.value})
-            }
-            if(data.cmd === "player start"){
-                this.userPlayer.play();
-                this.setState({isPlaying: true})
-                this.pitchDetector();
-            }
-            if(data.cmd === "player pause"){
-                this.setState({isPlaying: false});
-                this.userPlayer.pause();
-            }
-            if(data.cmd === "player stop"){
-                this.setState({isPlaying: false})
-                this.userPlayer.currentTime = 0;
-                this.userPlayer.pause();
-            }
-            if(data.cmd === "rewind"){
-                let newTransportPosition = this.userPlayer.currentTime - 30 > 0 ? this.userPlayer.currentTime - 30 : 0;
-                this.userPlayer.currentTime = newTransportPosition;
-            }
-            if(data.cmd === "fforward"){
-                let maxDuration = this.userPlayer.duration;
-                let newTransportPosition = this.userPlayer.currentTime + 30 < maxDuration ? this.userPlayer.currentTime + 30 : maxDuration;
-                this.userPlayer.currentTime = newTransportPosition;
-            }
+                this.createStreamToAdmin(call)
+                call.on('close', () => {
+                    console.log("CALL ENDED");
+                    clearInterval(this.updateAdminTimer);
+                    this.setState({isAdminConnected: false, updateAdminTimer: null});
+                })
+                call.on('error', () => {
+                    console.log("CALL ENDED ON ERROR");
+                    this.setState({isAdminConnected: false})
+                })
+                this.setState({isAdminConnected: true})
+                conn.send({cmd: 'user answered'})
+            });
         });
-        this.state.peer.on('call', (call) => {
-            console.log("Got call from admin");
-            this.createStreamToAdmin(call)
-            this.setState({isAdminConnected: true})
-        });
+        
     }
     createStreamToAdmin = async (call) => {
         await this.setState({clonedMicStream: this.state.micStream.clone(), clonedPlayerStream: this.state.playerStream.clone()})
@@ -215,6 +230,10 @@ export class UserContextStore extends Component{
             let adminMicPlayer = document.getElementById('adminMicPlayer');
             adminMicPlayer.srcObject= adminStream;
             adminMicPlayer.play()
+        });
+        call.on('close', () => {
+            console.log("CALL ENDED BY ADMIN");
+            this.setState({isAdminConnected: false});
         });
     }
     pitchDetector = () => {

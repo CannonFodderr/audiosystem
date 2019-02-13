@@ -1,6 +1,5 @@
 import React from 'react';
-import {Input, Button, Label, Checkbox, Segment, Container, Header, ButtonGroup} from 'semantic-ui-react';
-import {Slider} from 'react-semantic-ui-range';
+import {Button, Segment, Icon, Header, ButtonGroup} from 'semantic-ui-react';
 import adminContext from '../../contexts/adminContext';
 const Peer = window.Peer;
 
@@ -76,11 +75,12 @@ class RoomControls extends React.Component{
         )
     }
     renderPlayerControls = () => {
+        let isDisabled = this.context.onlineRooms.includes(this.context.selectedRoom.username) ? false : true;
         return (
         <Segment inverted>
             <h4>Connection</h4>
             <Button.Group className="ui two buttons">
-                <Button icon='assistive listening systems' id="startctx" content="Listen" color="blue"/>
+                <Button icon='assistive listening systems' id="startctx" content="Listen" color="blue" disabled={isDisabled}/>
                 <Button icon='sign out' id="disconnect" content="disconnect" color="red"/>
             </Button.Group>
             <h4>Talkback</h4>
@@ -209,7 +209,7 @@ class RoomControls extends React.Component{
         })
         .catch(err => console.error(err))
     }
-    callToUser = () => {
+    callToUser = async () => {
         this.setState({call: this.context.peer.call(this.context.selectedRoom.username, outputToUser.stream)});
         console.log(this.state.call);
         disconnectButton.addEventListener('click', () => {
@@ -222,9 +222,6 @@ class RoomControls extends React.Component{
             adminPlayer.srcObject = stream;
             adminPlayer.play();
         })
-        // call.on('close', () => {
-        //     this.disableUiElements();
-        // })
         this.state.call.on('error', (err) => {
             console.log(err);
         });
@@ -238,6 +235,10 @@ class RoomControls extends React.Component{
                     userMicGainSlider.value = data.micGain * 100;
                     userPlayerGainSlider.value = data.playerGain * 100;
                 }
+                // if(data.cmd === "user answered"){
+                //     console.log(conn)
+                //     this.context.setCurrentConnection(conn)
+                // }
             });
         });
     }
@@ -265,6 +266,9 @@ class RoomControls extends React.Component{
             )
         }
     }
+    componentWillUnmount(){
+        this.endCurrentCall();
+    }
     endCurrentCall = () => {
         if(this.state.call){
             console.log("Call Ended...");
@@ -275,12 +279,9 @@ class RoomControls extends React.Component{
         }
     }
     render(){
-        if(this.state.call && this.context.selectedRoom.username !== this.state.call.peer){
-            this.endCurrentCall();
-        }
         return(
             <Segment inverted>
-                <h1>{this.context.selectedRoom.username}</h1>
+                <h1>{this.context.selectedRoom.username} <Button inverted={true} floated="right" content={<Icon name='close'/>} onClick={() => {this.context.setSelectedRoom(null)}}/></h1>
                 <audio crossorigin="anonymous"></audio>
                 {this.renderUserPlayerTime()}
                 {this.renderPlayerControls()}

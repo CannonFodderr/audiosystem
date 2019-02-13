@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Container, Segment, List, Select, Confirm} from 'semantic-ui-react';
+import {Button, Container, Segment, List, Select, Confirm, Icon} from 'semantic-ui-react';
 import {serverAPI} from '../../api/api';
 import adminContext from '../../contexts/adminContext';
 
@@ -163,7 +163,7 @@ class RoomEdit extends Component{
     render(){
         return(
             <Segment inverted>
-                <h2>Edit: {this.context.selectedRoom.username}</h2>
+                <h1>{this.context.selectedRoom.username} <Button inverted={true} floated="right" content={<Icon name='close'/>} onClick={() => {this.context.setSelectedRoom(null)}}/></h1>
                 <h4>Select User</h4>
                 {this.renderUserSelection()}
                 <h4>Select Book</h4>
