@@ -17,15 +17,9 @@ const peerConfig = {
 
 const INITIAL_STATE = {
     isOnline: false,
-    peer: null,
     isPeerInitialized: false,
     isAdminConnected: false,
     isPlaying: false,
-    micStream: null,
-    playerStream: null,
-    micStreamToOutput: null,
-    clonedMicStream: null,
-    clonedPlayerStream: null,
     micGainValue: 0.5,
     playerGainValue: 0.8,
     isOscActive: true,
@@ -38,6 +32,7 @@ export class UserContextStore extends Component{
     constructor(props){
         super(props)
         this.ctx = null;
+        this.peer = null;
         this.micToAdminGain = null;
         this.playerToAdminGain = null;
         this.playerGain = null;
@@ -49,9 +44,15 @@ export class UserContextStore extends Component{
         this.detectPitch = pitchFinder.YIN();
         this.updateAdminTimer = null;
         this.adminMicPlayer = null;
+        this.micStream = null;
+        this.playerStream = null;
+        this.micStreamToOutput = null;
+        this.clonedMicStream = null;
+        this.clonedPlayerStream = null;
     }
     setPeerConnection = async () => {
-        await this.setState({peer: new Peer(this.context.room.username, peerConfig ), isPeerInitialized: true });
+        this.peer = new Peer(this.context.room.username, peerConfig );
+        await this.setState({isPeerInitialized: true });
     }
     initUserPlayback = async userPlayerElement => {
         this.ctx = await new(window.AudioContext || window.webkitAudioContext)();
@@ -60,13 +61,13 @@ export class UserContextStore extends Component{
         this.sampleRate = this.ctx.sampleRate;
         // Capture Stream from audio player
         if(this.isChromeBrowser()){
-            this.setState({playerStream: this.userPlayer.captureStream()})
+            this.playerStream = await this.userPlayer.captureStream();
         } else {
-            this.setState({playerStream: this.userPlayer.mozCaptureStream()})
+            this.playerStream = await this.userPlayer.mozCaptureStream();
         }
         this.playerGain = this.ctx.createGain()
         this.playerGain.gain.value = this.state.playerGainValue;
-        let playerStreamToOutput = this.ctx.createMediaStreamSource(this.state.playerStream);
+        let playerStreamToOutput = this.ctx.createMediaStreamSource(this.playerStream);
         let filter = this.ctx.createBiquadFilter();
         filter.type = "highpass";
         filter.frequency.value = 250;
@@ -90,12 +91,10 @@ export class UserContextStore extends Component{
         navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {
             this.micGain = this.ctx.createGain();
-            this.setState({
-                micStream: stream, 
-            })
+            this.micStream = stream;
             this.micGain.gain.value = this.state.micGainValue;
-            this.setState({micStreamToOutput: this.ctx.createMediaStreamSource(this.state.micStream)})
-            this.state.micStreamToOutput.connect(this.micGain);
+            this.micStreamToOutput = this.ctx.createMediaStreamSource(this.micStream)
+            this.micStreamToOutput.connect(this.micGain);
             this.micGain.connect(this.ctx.destination);
             console.log("Finished Mic Setup");
             this.setupConnection();
@@ -103,7 +102,7 @@ export class UserContextStore extends Component{
         .catch((err) => console.error(err));
     }
     setupConnection = async () =>{
-        let conn = await this.state.peer.connect('admin', {serialization: "json"});
+        let conn = await this.peer.connect('admin', {serialization: "json"});
         this.setState({isOnline: true})
         conn.on('open', () => {
             conn.send({cmd: "user online"});
@@ -166,7 +165,7 @@ export class UserContextStore extends Component{
                     this.userPlayer.currentTime = newTransportPosition;
                 }
             }
-            this.state.peer.on('call', (call) => {
+            this.peer.on('call', (call) => {
                 console.log("Got call from admin");
                 
                 this.createStreamToAdmin(call, conn)
@@ -190,10 +189,11 @@ export class UserContextStore extends Component{
         
     }
     createStreamToAdmin = async (call, conn) => {
-        await this.setState({clonedMicStream: this.state.micStream.clone(), clonedPlayerStream: this.state.playerStream.clone()})
+        this.clonedMicStream = this.micStream.clone();
+        this.clonedPlayerStream = this.playerStream.clone();
         let streamToAdmin = this.ctx.createMediaStreamDestination();
-        let micStreamToAdmin = this.ctx.createMediaStreamSource(this.state.clonedMicStream);
-        let playerStreamToAdmin = this.ctx.createMediaStreamSource(this.state.clonedPlayerStream);
+        let micStreamToAdmin = this.ctx.createMediaStreamSource(this.clonedMicStream);
+        let playerStreamToAdmin = this.ctx.createMediaStreamSource(this.clonedPlayerStream);
         // Stream volume mix controls
         this.micToAdminGain = this.ctx.createGain() 
         this.playerToAdminGain = this.ctx.createGain()
@@ -204,14 +204,6 @@ export class UserContextStore extends Component{
         playerStreamToAdmin.connect(this.playerToAdminGain)
         this.micToAdminGain.connect(streamToAdmin);
         this.playerToAdminGain.connect(streamToAdmin);
-        let options = {
-            'constraints': {
-                'mandatory': {
-                    'OfferToReceiveAudio': true,
-                    'OfferToReceiveVideo': false
-                }
-            }
-        }
         call.answer(streamToAdmin.stream)
         call.on('stream', (adminStream) => {
             this.adminMicPlayer = document.getElementById('adminMicPlayer');
@@ -283,8 +275,8 @@ export class UserContextStore extends Component{
         if(this.ctx){
             this.ctx.close();
         }
-        if(this.state.peer){
-            this.state.peer.close();
+        if(this.peer){
+            this.peer.close();
         }
     }
     render(){
