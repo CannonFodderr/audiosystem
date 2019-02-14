@@ -23,7 +23,6 @@ const INITIAL_STATE = {
     connData: {},
     userMicGainSlider: 50,
     userPlayerGainSlider: 70
-
 }
 
 export class AdminContextStore extends Component{
@@ -100,7 +99,6 @@ export class AdminContextStore extends Component{
         this.state.peer.destroy();
     }
     render(){
-        // console.log(this.state);
         return(
             <Context.Provider value={{
                 ...this.state,
