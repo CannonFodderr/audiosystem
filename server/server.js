@@ -55,6 +55,9 @@ app.use('/api', apiRoutes);
 app.get('/', (req, res) => {
     res.sendFile('index.html', {root: __dirname});
 });
+app.get('/status', (req, res)=> {
+    res.sendFile(__dirname + '/index.html');
+})
 // CONFIG PEER SERVER
 const peerserver = ExpressPeerServer(server, options);
 

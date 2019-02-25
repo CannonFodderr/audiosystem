@@ -2,9 +2,11 @@
   "name": "korenmern",
   "version": "0.1.0",
   "private": true,
+  "main": "main.js",
   "productName": "Audio System",
   "dependencies": {
     "axios": "^0.18.0",
+    "dotenv": "^6.2.0",
     "fomantic-ui": "^2.7.1",
     "peerjs": "^0.3.20",
     "pitchfinder": "^2.0.9",
@@ -19,7 +21,7 @@
     "start": "electron main.js",
     "build": "react-scripts build",
     "build-start": "npm run build && main.js",
-    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --asar --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Audio System\""
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --asar --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Audio System\""
   },
   "eslintConfig": {
     "extends": "react-app"
