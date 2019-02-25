@@ -6,11 +6,11 @@ app.commandLine.appendSwitch('ignore-certificate-errors');
 function createWindow () {
     // Create the browser window.
     let win = new BrowserWindow({ 
-        width: 800, 
-        height: 600,
+        width: 400, 
+        height: 120,
         autoHideMenuBar: true,
         useContentSize: true,
-        resizable: true,
+        resizable: false,
         webPreferences: {
             webSecurity: false,
             allowDisplayingInsecureContent: true,
