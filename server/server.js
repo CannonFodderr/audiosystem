@@ -71,3 +71,5 @@ app.use('/peerjs', peerserver);
 
 
 require('./db/seed');
+
+module.exports = app;
