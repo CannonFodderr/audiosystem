@@ -2,6 +2,7 @@
   "name": "korenmern",
   "version": "0.1.0",
   "private": true,
+  "productName": "Audio System",
   "dependencies": {
     "axios": "^0.18.0",
     "fomantic-ui": "^2.7.1",
@@ -15,11 +16,10 @@
     "semantic-ui-react": "^0.85.0"
   },
   "scripts": {
-    "start": "electron electron/main.js",
+    "start": "electron main.js",
     "build": "react-scripts build",
-    "build-start": "npm run build && electron/main.js",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build-start": "npm run build && main.js",
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --asar --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Audio System\""
   },
   "eslintConfig": {
     "extends": "react-app"

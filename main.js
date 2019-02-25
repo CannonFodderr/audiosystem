@@ -1,5 +1,5 @@
 const { app, BrowserWindow } = require('electron')
-const server = require('../server/server');
+const server = require('./server/server');
 
 app.commandLine.appendSwitch('ignore-certificate-errors');
 
