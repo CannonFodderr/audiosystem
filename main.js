@@ -10,7 +10,7 @@ function createWindow () {
         height: 120,
         autoHideMenuBar: true,
         useContentSize: true,
-        resizable: false,
+        resizable: true,
         webPreferences: {
             webSecurity: false,
             allowDisplayingInsecureContent: true,
@@ -18,7 +18,7 @@ function createWindow () {
         }
     });
     win.setMenu(null);
-    
+    win.webContents.openDevTools()
     appIcon = new Tray(__dirname + '/favicon.ico');
     let contextMenu = Menu.buildFromTemplate([
         { label: 'Show App', click:  function(){

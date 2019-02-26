@@ -87,12 +87,13 @@ router.get('/books/:bookId', (req, res) => {
 router.get('/audio', (req, res) => {
     console.log("Get file request from:", req.user);
         Room.findById(req.user._id).populate('currentBook').populate('currentUser').exec().then((foundRoom) => {
-            if(!foundRoom.currentBook.name || !foundRoom.currentPart){
+            if(!foundRoom || !foundRoom.currentBook.name || !foundRoom.currentPart){
                 console.log("Missing path data")
                 res.send("missin data")
             } else {
                 // SEND FILE TO ROOM
                 const bookPath = path.join(__dirname, `../assets/books/${foundRoom.currentBook.name}/${foundRoom.currentPart}`);
+                console.log(bookPath)
                 const state = fs.statSync(bookPath);
                 const fileSize = state.size;
                 const range = req.headers.range;
