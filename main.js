@@ -1,8 +1,8 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Tray, Menu } = require('electron')
 const server = require('./server/server');
 const env = require('dotenv').config();
 app.commandLine.appendSwitch('ignore-certificate-errors');
-
+let appIcon = null;
 function createWindow () {
     // Create the browser window.
     let win = new BrowserWindow({ 
@@ -16,28 +16,42 @@ function createWindow () {
             allowDisplayingInsecureContent: true,
             allowRunningInsecureContent: true
         }
-    })
-    let url = `https://${process.env.HOST}:${process.env.PORT}/status`;
-    win.loadURL(url);
+    });
+    win.setMenu(null);
+    
+    appIcon = new Tray('favicon.ico');
+    let contextMenu = Menu.buildFromTemplate([
+        { label: 'Show App', click:  function(){
+            app.isQuiting = false;
+            win.show();
+        } },
+        { label: 'Quit', click:  function(){
+            app.isQuiting = true;
+            app.quit();
+        } }
+    ]);
+    appIcon.setContextMenu(contextMenu);
+    win.on('minimize',function(event){
+        event.preventDefault();
+        win.hide();
+        return false;
+    });
+    
+    win.on('close', function (event) {
+        if(!app.isQuiting){
+            event.preventDefault();
+            win.hide();
+        }
+    
+        return false;
+    });
+    win.loadFile(__dirname + '/index.html')
     win.focus();
 
-    win.on('closed', () => {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
-        win = null
-    });
+    
+    
+    appIcon.setToolTip('Audio System Server');
 
 }
 
 app.on('ready', createWindow);
-
-
-
-app.on('window-all-closed', () => {
-    // On macOS it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
-});

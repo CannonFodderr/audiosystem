@@ -20,7 +20,7 @@
     "start": "electron main.js",
     "build": "react-scripts build",
     "build-start": "npm run build && main.js",
-    "package-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --asar --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Audio System\""
+    "package-win": "electron-packager . --overwrite --ignore=.mp3 --platform=win32 --arch=x64 --asar --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Audio System\""
   },
   "eslintConfig": {
     "extends": "react-app"
