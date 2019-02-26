@@ -3,10 +3,7 @@
 
 #### TL`DR
 Imagine a recording studio control room only with multiple recording rooms.
-The control room is able to monitor, talkback, control playback, volume and many other element for each room.
-
-#### Why did you create this?
-This is a digital version of an analog system created to help with reading disabilities treatment.
+The control room is able to monitor, talkback, control playback, volume and many other element for each room. This is a digital version of an analog system created to help with reading disabilities treatment.
 
 #### Can I try it?
 Yep but, This is a local project that supposed to work offline. 
