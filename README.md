@@ -8,6 +8,26 @@ The control room is able to monitor, talkback, control playback, volume and many
 #### Why did you create this?
 This is a digital version of an analog system created to help with reading disabilities treatment.
 
+#### Can I try it?
+Yep but, This is a local project that supposed to work offline. 
+You can download the **Electron Demo Server** which also includes some media assets to try out the app.
+
+* **Windows Only**
+* Running a mongoDB service is required.
+* [Download and unzip the file](https://drive.google.com/open?id=13xzngjy94ZKIXhz2Innc1j7BoBsahv57 "Electron Demo").
+* Run "Audio System.exe" to run the local server.
+* Open 2 chrome/firefox tabs for Admin and User.
+**Tab 1 - Admin**
+* Enter Admin credentials:
+    * Username: admin
+    * Password: admin
+* Setup Room 0 and save.
+**Tab 2 - User**
+* Enter User credetials:
+    * Username: Room 0
+    * Password: Room0
+***Enjoy!**
+
 #### What can it do?
 The application is in its early stages but already implements: 
 * One central *control room (ADMIN)* that can connect & control and listen to many *listening rooms (USERS)*.

@@ -11,7 +11,7 @@ server.key
 .mp3
 # testing
 /coverage
-
+release-builds
 # production
 /build
 
