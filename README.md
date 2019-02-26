@@ -58,17 +58,3 @@ The application is in its early stages but already implements:
 * *SETUP ENV VARIABLES* - PORT, HOST, DEV_DB_URL
 * *Run* : npm install, num run build || num run start-build (with nodemon)
 * *This project runs localy* to provide service without internet connection.
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm build-start`
-
-Builds the app for production to the `build` folder.<br>
-Builds react and serves with nodemon
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
