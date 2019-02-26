@@ -12,6 +12,8 @@ This is a digital version of an analog system created to help with reading disab
 Yep but, This is a local project that supposed to work offline. 
 You can download the **Electron Demo Server** which also includes some media assets to try out the app.
 
+##### Electron Setup
+
 * **Windows Only**
 * Running a mongoDB service is required.
 * [Download and unzip the file](https://drive.google.com/open?id=13xzngjy94ZKIXhz2Innc1j7BoBsahv57 "Electron Demo").
@@ -26,7 +28,7 @@ You can download the **Electron Demo Server** which also includes some media ass
 * Enter User credetials:
     * Username: Room 0
     * Password: Room0
-***Enjoy!**
+* **Enjoy!**
 
 #### What can it do?
 The application is in its early stages but already implements: 
