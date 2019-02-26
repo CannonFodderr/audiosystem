@@ -1,4 +1,4 @@
-# Multi-Room Control Audio System
+# Multi-Room Control/Monitoring Audio System
 #### MERN Stack, WebRTC, Audio API
 
 #### TL`DR
