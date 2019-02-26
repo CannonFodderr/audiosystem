@@ -19,7 +19,7 @@ function createWindow () {
     });
     win.setMenu(null);
     
-    appIcon = new Tray('favicon.ico');
+    appIcon = new Tray(__dirname + '/favicon.ico');
     let contextMenu = Menu.buildFromTemplate([
         { label: 'Show App', click:  function(){
             app.isQuiting = false;
