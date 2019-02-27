@@ -13,7 +13,7 @@ You can download the **Electron Demo Server** which also includes some media ass
 
 * **Windows Only**
 * Running a mongoDB service is required.
-* [Download and unzip the file](https://drive.google.com/open?id=13xzngjy94ZKIXhz2Innc1j7BoBsahv57 "Electron Demo").
+* [Download and unzip the file](https://drive.google.com/open?id=1CPRC5LDkLggWuIbdhVyE5Hot5TP597MS "Electron Demo").
 * Run "Audio System.exe" to run the local server.
 * Open 2 chrome/firefox tabs for Admin and User.
 **Tab 1 - Admin**
