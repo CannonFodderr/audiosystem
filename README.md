@@ -16,12 +16,12 @@ You can download the **Electron Demo Server** which also includes some media ass
 * [Download and unzip the file](https://drive.google.com/open?id=1CPRC5LDkLggWuIbdhVyE5Hot5TP597MS "Electron Demo").
 * Run "Audio System.exe" to run the local server.
 * Open 2 chrome/firefox tabs for Admin and User.
-**Tab 1 - Admin**
+##### **Tab 1 - Admin**
 * Enter Admin credentials:
     * Username: admin
     * Password: admin
 * Setup Room 0 and save.
-**Tab 2 - User**
+##### **Tab 2 - User**
 * Enter User credetials:
     * Username: Room 0
     * Password: Room0
