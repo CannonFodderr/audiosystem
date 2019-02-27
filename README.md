@@ -23,7 +23,7 @@ You can download the **Electron Demo Server** which also includes some media ass
     * Password: admin
 * Setup Room 0 and save.
 ##### **Tab 2 - User**
-* Enter User credetials:
+* Enter User credetials (Change numbers for diffrent rooms):
     * Username: Room 0
     * Password: Room0
 * **Enjoy!**
