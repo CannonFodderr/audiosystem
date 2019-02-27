@@ -53,7 +53,8 @@ The application is in its early stages but already implements:
 * View current room playback time
 
 ## REQUIREMENTS
-* *UPDATED CHROME OR FIREFOX* - for Audio HTML elements stream capture
+* *UPDATED CHROME OR FIREFOX* - for Audio HTML elements stream capture.
+* An active MongoDB **local** service.
 * *GET OPEN SSL Certificate* - save as server.cert + server.key - for serving HTTPS (Required for proper audio context streams otherwise mose browsers will silence the output).
 * *Create media library* - server/assets/books, each subfolder will be logged in the DB, each file in subfolder will be added as parts array. *NOTE:*(This project refers to audio books but you can change the scan path...)
 * *SETUP ENV VARIABLES* - PORT, HOST, DEV_DB_URL
