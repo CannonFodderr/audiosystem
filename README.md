@@ -15,7 +15,8 @@ You can download the **Electron Demo Server** which also includes some media ass
 * Running a mongoDB service is required.
 * [Download and unzip the file](https://drive.google.com/open?id=1CPRC5LDkLggWuIbdhVyE5Hot5TP597MS "Electron Demo").
 * Run "Audio System.exe" to run the local server.
-* Open 2 chrome/firefox tabs for Admin and User.
+* Open 2 chrome/firefox tabs for Admin and User - 
+##### if you are connecting from a remote computer use your IPv4 address instead of localhost.
 ##### **Tab 1 - Admin**
 * Enter Admin credentials:
     * Username: admin
