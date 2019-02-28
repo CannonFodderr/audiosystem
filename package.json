@@ -2,24 +2,26 @@
   "name": "korenmern",
   "version": "0.1.0",
   "private": true,
+  "main": "main.js",
+  "productName": "Audio System",
   "dependencies": {
     "axios": "^0.18.0",
-    "fomantic-ui": "^2.7.1",
+    "dotenv": "^6.2.0",
     "peerjs": "^0.3.20",
     "pitchfinder": "^2.0.9",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-scripts": "2.1.3",
+    "react-scripts": "^2.1.5",
     "react-semantic-ui-range": "^0.6.2",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.85.0"
   },
   "scripts": {
-    "start": "node server/server.js",
+    "start": "electron main.js",
     "build": "react-scripts build",
-    "build-start": "npm run build && nodemon",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build-start": "npm run build && main.js",
+    "package-win": "electron-packager . --overwrite --ignore=.mp3 --platform=win32 --arch=x64 --asar --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Audio System\"",
+    "package-win-with-assets": "electron-packager . --overwrite --platform=win32 --arch=x64 --asar --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Audio System\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -29,5 +31,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "electron": "^4.0.5"
+  }
 }

@@ -5,6 +5,7 @@ const Book = require('../models/Books');
 const {isLoggedIn, isAdmin} = require('../middleware/auth');
 const passport = require('passport');
 const fs = require('fs');
+const path = require('path');
 
 // AUTHENTICATION
 router.post('/login', passport.authenticate('local'), (req, res) => {
@@ -86,13 +87,14 @@ router.get('/books/:bookId', (req, res) => {
 router.get('/audio', (req, res) => {
     console.log("Get file request from:", req.user);
         Room.findById(req.user._id).populate('currentBook').populate('currentUser').exec().then((foundRoom) => {
-            if(!foundRoom.currentBook.name || !foundRoom.currentPart){
+            if(!foundRoom || !foundRoom.currentBook.name || !foundRoom.currentPart){
                 console.log("Missing path data")
                 res.send("missin data")
             } else {
                 // SEND FILE TO ROOM
-                const path = `server/assets/books/${foundRoom.currentBook.name}/${foundRoom.currentPart}`;
-                const state = fs.statSync(path);
+                const bookPath = path.join(__dirname, `../assets/books/${foundRoom.currentBook.name}/${foundRoom.currentPart}`);
+                console.log(bookPath)
+                const state = fs.statSync(bookPath);
                 const fileSize = state.size;
                 const range = req.headers.range;
                 if(range){
@@ -100,7 +102,7 @@ router.get('/audio', (req, res) => {
                     const start = parseInt(parts[0], 10);
                     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
                     const chunkSize = (end-start)+1;
-                    const file = fs.createReadStream(path, {start, end});
+                    const file = fs.createReadStream(bookPath, {start, end});
                     const head = {
                         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
                         'Accept-Ranges': 'bytes',
@@ -117,7 +119,7 @@ router.get('/audio', (req, res) => {
                     }
                     console.log("Streaming first part")
                     res.writeHead(200, head)
-                    fs.createReadStream(path).pipe(res)
+                    fs.createReadStream(bookPath).pipe(res)
                 }
             }
         })

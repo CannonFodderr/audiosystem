@@ -11,6 +11,7 @@ server.key
 .mp3
 # testing
 /coverage
+auditorio-win32-x64
 release-builds
 # production
 /build

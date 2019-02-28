@@ -6,16 +6,16 @@ Imagine a recording studio control room only with multiple recording rooms.
 The control room is able to monitor, talkback, control playback, volume and many other element for each room. This is a digital version of an analog system created to help with reading disabilities treatment.
 
 #### Can I try it?
-Yep but, This is a local project that supposed to work offline. 
-You can download the **Electron Demo Server** which also includes some media assets to try out the app.
+
+Yep but, Because This is a local project that supposed to work offline I compiled an **Electron Demo Server** that you can download, It also includes some media assets for you to try out.
 
 ##### Electron Setup
 
 * **Windows Only**
 * Running a mongoDB service is required.
-* [Download and unzip the file](https://drive.google.com/open?id=1VZbaBlFKhXvjzTZ-oXx2mg67KnNw6S2H "Electron Demo").
+* [Download and unzip the file](https://drive.google.com/open?id=1CGHlPloR0fQEVhB6VTPLaqXyk3sNtgcA "Electron Demo").
 * Run "Audio System.exe" to run the local server.
-* Open 2 chrome/firefox tabs for Admin and User - 
+* Open 2 chrome/firefox tabs for Admin and User
 ##### if you are connecting from a remote computer use your IPv4 address instead of localhost.
 ##### **Tab 1 - Admin**
 * Enter Admin credentials:

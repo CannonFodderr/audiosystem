@@ -15,7 +15,7 @@ const app = express();
 const apiRoutes = require('./routes/api');
 
 app.set('view engine', 'ejs');
-// app.use(express.static(path.join(__dirname, 'semantic')));
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.resolve(__dirname, '../', 'build')))
 app.use(express.json());
@@ -30,8 +30,7 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-require('./db/connect');
+let dbConnection = require('./db/connect');
 
 // CONFIG PASSPORT
 const Room = require('./models/Room');
@@ -39,12 +38,15 @@ passport.use(new LocalStrategy(Room.authenticate()));
 passport.serializeUser(Room.serializeUser());
 passport.deserializeUser(Room.deserializeUser());
 
+let rootPath = path.join(__dirname, '../');
+let dirPath = path.join(__dirname + '/');
+
 const server = https.createServer({
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.cert')
+    key: fs.readFileSync(rootPath + 'server.key'),
+    cert: fs.readFileSync(rootPath + 'server.cert')
 }, app).listen(port, host, () => {
     console.log(`Serving on ${host}:${port}`);
-})
+});
 
 const options = {
     debug: true
@@ -55,6 +57,9 @@ app.use('/api', apiRoutes);
 app.get('/', (req, res) => {
     res.sendFile('index.html', {root: __dirname});
 });
+app.get('/status', (req, res)=> {
+    res.sendFile(dirPath + 'index.html');
+})
 // CONFIG PEER SERVER
 const peerserver = ExpressPeerServer(server, options);
 
@@ -71,3 +76,5 @@ app.use('/peerjs', peerserver);
 
 
 require('./db/seed');
+
+module.exports = app;

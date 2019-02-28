@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
-import {List, Button, Card, Icon, Container} from 'semantic-ui-react';
+import {Button, Card, Icon, Container} from 'semantic-ui-react';
 import adminContext from '../../contexts/adminContext';
 import RoomEdit from '../RoomEdit/RoomEdit';
 import RoomControls from '../RoomControls/RoomControls';
 
 class RoomList extends Component{
+    constructor(props){
+        super(props)
+    }
     renderRoomControlsOrEdit = () => {
         if(!this.context.selectedRoom){
             return <div></div>
@@ -64,12 +67,12 @@ class RoomList extends Component{
         } 
     }
     renderRoomlist = () => {
-        if(this.context.rooms.length < 1){
+        if(!this.props.rooms || this.props.rooms.length < 1){
             return <div>Loading rooms...</div>
         }
         return (
             <Card.Group>
-                {this.context.rooms.map((room, index) => {
+                {this.props.rooms.map((room, index) => {
                     let color = this.setStatusIconColor(room)
                     if(room.isAdmin === true){
                         return
