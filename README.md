@@ -6,6 +6,7 @@ Imagine a recording studio control room only with multiple recording rooms.
 The control room is able to monitor, talkback, control playback, volume and many other element for each room. This is a digital version of an analog system created to help with reading disabilities treatment.
 
 #### Can I try it?
+
 Yep but, Because This is a local project that supposed to work offline I compiled an **Electron Demo Server** that you can download, It also includes some media assets for you to try out.
 
 ##### Electron Setup
