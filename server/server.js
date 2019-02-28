@@ -30,8 +30,7 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-require('./db/connect');
+let dbConnection = require('./db/connect');
 
 // CONFIG PASSPORT
 const Room = require('./models/Room');

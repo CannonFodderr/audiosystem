@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu } = require('electron')
+const { app, BrowserWindow, Tray, Menu, dialog } = require('electron')
 const server = require('./server/server');
 const env = require('dotenv').config();
 
@@ -67,16 +67,23 @@ function createWindow () {
             event.preventDefault();
             win.hide();
         }
-        
         return false;
     });
-    win.loadFile(__dirname + '/index.html')
-    win.focus();
-    
-    
-    
+    require('./server/db/connect').then((isConnected) => {
+        if(!isConnected){
+            dialog.showErrorBox('DB ERROR', "Check if MongoDB service is running");
+            app.isQuiting = true;
+            app.quit()
+        } else {
+            win.loadFile(__dirname + '/index.html');
+        }
+        win.focus();
+    });
     appIcon.setToolTip('Audio System Server');
-    
+    appIcon.on('click', () => {
+        win.show(); 
+        win.focus()
+    })
 }
 
 app.on('ready', createWindow);
