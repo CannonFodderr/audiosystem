@@ -1,12 +1,32 @@
-# Multi-Room Control Audio System
+# Multi-Room Control/Monitoring Audio System
 #### MERN Stack, WebRTC, Audio API
 
 #### TL`DR
 Imagine a recording studio control room only with multiple recording rooms.
-The control room is able to monitor, talkback, control playback, volume and many other element for each room.
+The control room is able to monitor, talkback, control playback, volume and many other element for each room. This is a digital version of an analog system created to help with reading disabilities treatment.
 
-#### Why did you create this?
-This is a digital version of an analog system created to help with reading disabilities treatment.
+#### Can I try it?
+Yep but, This is a local project that supposed to work offline. 
+You can download the **Electron Demo Server** which also includes some media assets to try out the app.
+
+##### Electron Setup
+
+* **Windows Only**
+* Running a mongoDB service is required.
+* [Download and unzip the file](https://drive.google.com/open?id=1VZbaBlFKhXvjzTZ-oXx2mg67KnNw6S2H "Electron Demo").
+* Run "Audio System.exe" to run the local server.
+* Open 2 chrome/firefox tabs for Admin and User
+##### if you are connecting from a remote computer use your IPv4 address instead of localhost.
+##### **Tab 1 - Admin**
+* Enter Admin credentials:
+    * Username: admin
+    * Password: admin
+* Setup Room 0 and save.
+##### **Tab 2 - User**
+* Enter User credetials (Change numbers for diffrent rooms):
+    * Username: Room 0
+    * Password: Room0
+* **Enjoy!**
 
 #### What can it do?
 The application is in its early stages but already implements: 
@@ -33,23 +53,10 @@ The application is in its early stages but already implements:
 * View current room playback time
 
 ## REQUIREMENTS
-* *UPDATED CHROME OR FIREFOX* - for Audio HTML elements stream capture
+* *UPDATED CHROME OR FIREFOX* - for Audio HTML elements stream capture.
+* An active MongoDB **local** service.
 * *GET OPEN SSL Certificate* - save as server.cert + server.key - for serving HTTPS (Required for proper audio context streams otherwise mose browsers will silence the output).
 * *Create media library* - server/assets/books, each subfolder will be logged in the DB, each file in subfolder will be added as parts array. *NOTE:*(This project refers to audio books but you can change the scan path...)
 * *SETUP ENV VARIABLES* - PORT, HOST, DEV_DB_URL
 * *Run* : npm install, num run build || num run start-build (with nodemon)
 * *This project runs localy* to provide service without internet connection.
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm build-start`
-
-Builds the app for production to the `build` folder.<br>
-Builds react and serves with nodemon
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
