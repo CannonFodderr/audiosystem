@@ -12,6 +12,7 @@ const peerConfig = {
     debug: 0,
 }
 const INITIAL_STATE = {
+    activeMenuItem: "Rooms",
     peer: null,
     isPeerInitialized: false,
     rooms: [],
@@ -22,13 +23,25 @@ const INITIAL_STATE = {
     currentCall: null,
     connData: {},
     userMicGainSlider: 50,
-    userPlayerGainSlider: 70
+    userPlayerGainSlider: 70,
+    showModal: false
 }
 
 export class AdminContextStore extends Component{
     constructor(props){
         super(props)
         this.state = INITIAL_STATE;
+    }
+    handleMenuItemClick = (e, {name}) => {
+        this.setState({activeMenuItem: name})
+    }
+    setShowModal = showModal => {
+        this.setState({showModal})
+    }
+    createNewUser = user => {
+        serverAPI.post('/user', user)
+        .then(res => { console.log(res.data)})
+        .catch(err => console.log(err));
     }
     getAllRooms = () => {
         serverAPI.get('/rooms')
@@ -109,7 +122,10 @@ export class AdminContextStore extends Component{
                 setCurrentCall: this.setCurrentCall,
                 hangCurrentCall: this.hangCurrentCall,
                 editSelectedRoom: this.editSelectedRoom,
-                getAllRooms: this.getAllRooms
+                getAllRooms: this.getAllRooms,
+                handleMenuItemClick: this.handleMenuItemClick,
+                createNewUser: this.createNewUser,
+                setShowModal: this.setShowModal
                 }}>
                 {this.props.children}
             </Context.Provider>
