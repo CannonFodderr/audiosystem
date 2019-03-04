@@ -5,24 +5,28 @@
 Imagine a recording studio control room only with multiple recording rooms.
 The control room is able to monitor, talkback, control playback, volume and many other element for each room. This is a digital version of an analog system created to help with reading disabilities treatment.
 
+**[Full article on Medium](https://medium.com/@izhaki.idan/audio-for-learning-disabilities-713ea040e3c6 "Web Audio for learning disabilities
+")**
+
 #### Can I try it?
-Yep but, This is a local project that supposed to work offline. 
-You can download the **Electron Demo Server** which also includes some media assets to try out the app.
+
+Yep but, Because This is a local project that supposed to work offline I compiled an **Electron Demo Server** that you can download, It also includes some media assets for you to try out.
 
 ##### Electron Setup
 
 * **Windows Only**
 * Running a mongoDB service is required.
-* [Download and unzip the file](https://drive.google.com/open?id=13xzngjy94ZKIXhz2Innc1j7BoBsahv57 "Electron Demo").
+* [Download and unzip the file](https://drive.google.com/open?id=1CGHlPloR0fQEVhB6VTPLaqXyk3sNtgcA "Electron Demo").
 * Run "Audio System.exe" to run the local server.
-* Open 2 chrome/firefox tabs for Admin and User.
-**Tab 1 - Admin**
+* Open 2 chrome/firefox tabs for Admin and User
+##### if you are connecting from a remote computer use your IPv4 address instead of localhost.
+##### **Tab 1 - Admin**
 * Enter Admin credentials:
     * Username: admin
     * Password: admin
 * Setup Room 0 and save.
-**Tab 2 - User**
-* Enter User credetials:
+##### **Tab 2 - User**
+* Enter User credetials (Change numbers for diffrent rooms):
     * Username: Room 0
     * Password: Room0
 * **Enjoy!**
@@ -52,7 +56,8 @@ The application is in its early stages but already implements:
 * View current room playback time
 
 ## REQUIREMENTS
-* *UPDATED CHROME OR FIREFOX* - for Audio HTML elements stream capture
+* *UPDATED CHROME OR FIREFOX* - for Audio HTML elements stream capture.
+* An active MongoDB **local** service.
 * *GET OPEN SSL Certificate* - save as server.cert + server.key - for serving HTTPS (Required for proper audio context streams otherwise mose browsers will silence the output).
 * *Create media library* - server/assets/books, each subfolder will be logged in the DB, each file in subfolder will be added as parts array. *NOTE:*(This project refers to audio books but you can change the scan path...)
 * *SETUP ENV VARIABLES* - PORT, HOST, DEV_DB_URL

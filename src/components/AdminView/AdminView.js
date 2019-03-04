@@ -6,7 +6,7 @@ class AdminView extends React.Component{
     render(){
         return(
             <div>
-                <RoomList />
+                <RoomList rooms={this.context.rooms}/>
             </div>
         )
     }
