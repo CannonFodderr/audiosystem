@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Form, Message ,Button} from 'semantic-ui-react';
-import {serverAPI} from '../../api/api';
 import appContext from '../../contexts/appContext';
 
 class LoginForm extends Component{
