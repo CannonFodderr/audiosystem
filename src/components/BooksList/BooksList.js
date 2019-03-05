@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {Card} from 'semantic-ui-react';
 import {serverAPI} from '../../api/api';
+import adminContext from '../../contexts/adminContext';
 
 class BooksList extends Component{
-    state = { books: [] }
     renderBooksList = () => {
-        let books = this.state.books;
+        let books = this.context.books;
         if(!books || books.length < 1){
             return <div>Loading books...</div>
         } else {
@@ -20,13 +20,8 @@ class BooksList extends Component{
             })
         }
     }
-    setCurrentUsers = books => {
-        this.setState({books});
-    }
     componentDidMount(){
-        serverAPI.get('/books')
-        .then(res => { this.setCurrentUsers(res.data)})
-        .catch(err => { console.log(err)});
+        this.context.fetchBooksList()
     }
     render(){
         return (
@@ -38,5 +33,5 @@ class BooksList extends Component{
         )
     }
 }
-
+BooksList.contextType = adminContext;
 export default BooksList;

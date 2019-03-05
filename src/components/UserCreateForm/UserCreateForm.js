@@ -17,7 +17,7 @@ class UserCreateForm extends Component{
             return this.setState({err: "Invalid lastName"})
         }
         this.setState({err: null});
-        return this.context.createNewUser({firstName: this.state.firstName, lastName: this.state.lastName, email: this.state.email});
+        this.context.createNewUser({firstName: this.state.firstName, lastName: this.state.lastName, email: this.state.email});
     }
     setFirstName = (event) => {
         this.setState({firstName: event.target.value})
