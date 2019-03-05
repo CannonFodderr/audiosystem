@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {Menu, Input} from 'semantic-ui-react';
 import adminContext from '../../contexts/adminContext';
+import ModalNav  from '../ModalNav/ModalNav';
+import UserCreateForm from '../UserCreateForm/UserCreateForm';
+import BookCreateForm from '../BookCreateForm/BookCreateForm';
 
 class NavBar extends Component{
     renderAddButton = () => {
@@ -8,10 +11,10 @@ class NavBar extends Component{
             return <Menu.Item name="" disabled/>
         }
         if(this.context.activeMenuItem === 'Books'){
-            return <Menu.Item name="Add Book" onClick={() => this.context.setShowModal(true)}/>
+            return <ModalNav header="Add Books" content={<BookCreateForm />} actions="" icon="book"/>
         }
         if(this.context.activeMenuItem === 'Users'){
-            return <Menu.Item name="Add User" onClick={() => this.context.setShowModal(true)}/>
+            return <ModalNav header="Add Users" content={<UserCreateForm />} actions="" icon="add user"/>
         }
     }
     renderSearchBox = () => {

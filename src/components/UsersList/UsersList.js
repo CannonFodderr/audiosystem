@@ -1,34 +1,45 @@
 import React, {Component} from 'react';
-import {Card} from 'semantic-ui-react';
+import {Card, Icon, Button} from 'semantic-ui-react';
 import {serverAPI} from '../../api/api';
 import adminContext from '../../contexts/adminContext';
 
 class UsersList extends Component{
-    state = {users: []};
-
+    deleteUser = user => {
+        serverAPI.delete(`/users/${user._id}`)
+        .then(() => {
+            this.context.fetchUsersList();
+        })
+        .catch(err => console.log(err));
+    }
     renderUsersList = () => {
-        let users = this.state.users;
+        let users = this.context.users;
         if(!users || users.length < 1){
             return <div>Loading users...</div>
         } else {
             return users.map(user => {
+                if(user.isAdmin){
+                    return
+                }
                 return (
                     <Card key={user._id}>
                         <Card.Content>
                             <Card.Header as="a" >{user.firstName} {user.lastName}</Card.Header>
+                            <Card.Content extra>
+                            <Button size="small" negative onClick={() => {
+                                this.deleteUser(user)
+                            }}>
+                                <Icon name="delete" />
+                                Delete
+                            </Button>
+                            </Card.Content>
                         </Card.Content>
                     </Card>
                 )
             })
         }
     }
-    setCurrentUsers = users => {
-        this.setState({users});
-    }
     componentDidMount(){
-        serverAPI.get('/users')
-        .then(res => { this.setCurrentUsers(res.data)})
-        .catch(err => { console.log(err)});
+        this.context.fetchUsersList()
     }
     render(){
         return (

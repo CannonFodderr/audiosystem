@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {serverAPI} from '../api/api'
 import PeerClient from 'peerjs';
+import {Confirm} from 'semantic-ui-react';
 const Context = React.createContext();
 const Peer = window.Peer;
 
@@ -15,7 +16,10 @@ const INITIAL_STATE = {
     activeMenuItem: "Rooms",
     peer: null,
     isPeerInitialized: false,
+    isNavModalOpen: false,
     rooms: [],
+    users: [],
+    books: [],
     onlineRooms: [],
     selectedRoom: null,
     editRoom: false,
@@ -24,7 +28,6 @@ const INITIAL_STATE = {
     connData: {},
     userMicGainSlider: 50,
     userPlayerGainSlider: 70,
-    showModal: false
 }
 
 export class AdminContextStore extends Component{
@@ -35,15 +38,31 @@ export class AdminContextStore extends Component{
     handleMenuItemClick = (e, {name}) => {
         this.setState({activeMenuItem: name})
     }
-    setShowModal = showModal => {
-        this.setState({showModal})
+    dispalyNavModal = isNavModalOpen => {
+        this.setState({isNavModalOpen });
     }
     createNewUser = user => {
-        serverAPI.post('/user', user)
-        .then(res => { console.log(res.data)})
+        serverAPI.post('/users', user)
+        .then(() => this.fetchUsersList())
         .catch(err => console.log(err));
     }
-    getAllRooms = () => {
+    fetchUsersList = () => {
+        serverAPI.get('/users')
+        .then(res => this.setState({ users: res.data, isNavModalOpen: false }))
+        .catch(err => { console.log(err)});
+    }
+    fetchBooksList = () => {
+        serverAPI.get('/books')
+        .then(res =>  this.setState({books: res.data, isNavModalOpen: false}))
+        .catch(err => { console.log(err)});
+    }
+    createNewBook = book => {
+        console.log(book);
+        serverAPI.post('/books', book)
+        .then(res => { console.log(res)})
+        .catch(err => console.log(err));
+    }
+    getAllRooms = async () => {
         serverAPI.get('/rooms')
         .then((res) => {
             this.setState({rooms: res.data});
@@ -125,7 +144,10 @@ export class AdminContextStore extends Component{
                 getAllRooms: this.getAllRooms,
                 handleMenuItemClick: this.handleMenuItemClick,
                 createNewUser: this.createNewUser,
-                setShowModal: this.setShowModal
+                fetchUsersList: this.fetchUsersList,
+                fetchBooksList: this.fetchBooksList,
+                createNewBook: this.createNewBook,
+                dispalyNavModal: this.dispalyNavModal
                 }}>
                 {this.props.children}
             </Context.Provider>

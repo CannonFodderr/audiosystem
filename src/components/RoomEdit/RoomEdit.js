@@ -23,7 +23,7 @@ class RoomEdit extends Component{
         });
     }
     renderUserSelection = () => {
-        if(!this.state.allUsers){
+        if(!this.context.users){
             return <option>Loading Users...</option>
         } else {
             let currentUserId = "";
@@ -44,12 +44,13 @@ class RoomEdit extends Component{
         }
     }
     renderUserList = () => {
-        return this.state.allUsers.map((user) => {
+        return this.context.users.map((user) => {
             return <option id={user._id} key={user._id}>{user.firstName} {user.lastName}</option>
         })
     }
     renderBookSelection = () => {
-        if(!this.state.allBooks){
+        let books = this.context.books
+        if(!books || books.length < 1 ){
             return <option>Loading Books Data...</option>
         } else {
             let currentBookId = "";
@@ -69,7 +70,7 @@ class RoomEdit extends Component{
         }
     }
     renderBookList = () => {
-        return this.state.allBooks.map((book) => {
+        return this.context.books.map((book) => {
             return <option id={book._id} key={book._id}>{book.name}</option>
         })
     }
@@ -91,26 +92,13 @@ class RoomEdit extends Component{
         }
     }
     renderPartsList = () => {
-        if(this.state.allBooks){
-            let selectedBook = this.state.allBooks.filter(book => book._id === this.state.currentBook);
+        let books = this.context.books;
+        if(books && books.length > 0){
+            let selectedBook = books.filter(book => book._id === this.state.currentBook);
             return selectedBook[0].parts.map((part, index) => {
                 return <option key={index} id={part}>{part}</option>
             })
         }
-    }
-    requestUsersList = () => {
-        serverAPI.get('/users')
-        .then((res) => {
-            this.setState({allUsers: res.data})
-        })
-        .catch(err => console.log(err));
-    }
-    requestBooksList = () => {
-        serverAPI.get('/books')
-        .then((res) => {
-            this.setState({allBooks: res.data})
-        })
-        .catch(err => console.log(err));
     }
     renderButtons = () =>{
         if(this.state.currentUser && this.state.currentBook && this.state.currentPart){
@@ -156,8 +144,8 @@ class RoomEdit extends Component{
         }
     }
     componentDidMount(){
-        this.requestUsersList();
-        this.requestBooksList();
+        this.context.fetchUsersList();
+        this.context.fetchBooksList()
         this.setCurrentState();
     }
     render(){
