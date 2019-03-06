@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, Message ,Button} from 'semantic-ui-react';
+import {Form, Message ,Button, Dimmer, Loader} from 'semantic-ui-react';
 import adminContext from '../../contexts/adminContext';
 
 class BookCreateForm extends Component{
@@ -10,17 +10,17 @@ class BookCreateForm extends Component{
     state = {
         name: null,
         author: null,
-        err: null
+        err: null,
+        showLoader: false
     }
     validateForm = () => {
-        console.log(this.state);
         if(!this.state.name || this.state.name.length < 2){
             return this.setState({err: "Invalid name"})
         }
         if(!this.state.author || this.state.author.length < 2){
             return this.setState({err: "Invalid author"})
         }
-        this.setState({err: null});
+        this.setState({err: null, showLoader: true});
         this.handleUpload()
     }
     handleUpload = () => {
@@ -30,7 +30,6 @@ class BookCreateForm extends Component{
         for(let i = 0; i < this.parts.length; i++){
             data.append(`file${i}`, this.parts[i], this.parts[i].name)
         }
-        console.log(data.entries());
         this.context.createNewBook(data);
     }
     setName = (event) => {
@@ -49,9 +48,16 @@ class BookCreateForm extends Component{
         return (
             <Message error header="Something went wrong :("  content={this.state.err} style={{display:"block"}}/>
         )
-    } 
-    render(){
-        return(
+    }
+    renderContent = () => {
+        if(this.state.showLoader){
+            return (
+                <Dimmer active>
+                    <Loader indeterminate>Uploading Files...</Loader>
+                </Dimmer>
+            )
+        } else {
+            return (
             <Form>
                 {this.renderErrorMessage()}
                 <Form.Field>
@@ -68,6 +74,14 @@ class BookCreateForm extends Component{
                 </Form.Field>
                 <Button type='submit' fluid primary onClick={(e) => {this.validateForm()}}>Submit</Button>
             </Form>
+            )
+        }
+    }
+    render(){
+        return(
+            <div>
+                {this.renderContent()}
+            </div>
         )
     }
 };

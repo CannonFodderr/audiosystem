@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Container, Segment, List, Select, Confirm, Icon} from 'semantic-ui-react';
+import {Button, Segment, List, Icon} from 'semantic-ui-react';
 import {serverAPI} from '../../api/api';
 import adminContext from '../../contexts/adminContext';
 

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {serverAPI} from '../api/api'
 import PeerClient from 'peerjs';
-import {Confirm} from 'semantic-ui-react';
 const Context = React.createContext();
 const Peer = window.Peer;
 
@@ -57,7 +56,6 @@ export class AdminContextStore extends Component{
         .catch(err => { console.log(err) });
     }
     createNewBook = book => {
-        console.log(book);
         serverAPI.post('/books', book)
         .then(() => { this.fetchBooksList() })
         .catch(err => console.log(err));

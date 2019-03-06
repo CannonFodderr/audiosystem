@@ -5,9 +5,6 @@ import RoomEdit from '../RoomEdit/RoomEdit';
 import RoomControls from '../RoomControls/RoomControls';
 
 class RoomList extends Component{
-    constructor(props){
-        super(props)
-    }
     renderRoomControlsOrEdit = () => {
         if(!this.context.selectedRoom){
             return <div></div>

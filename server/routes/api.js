@@ -83,9 +83,8 @@ router.get('/users/:userId',isLoggedIn, (req, res) => {
 });
 
 router.delete('/users/:userId',isLoggedIn, (req, res) => {
-    console.log("GOT DELELTE REQUEST");
     User.findOneAndDelete({_id: req.params.userId}).then((deletedUser) => {
-        console.timeLog(deletedUser);
+        console.log("Deleted:" ,deletedUser);
         res.json({msg: "Deleted User", data: deletedUser})
     })
     .catch(() => {
