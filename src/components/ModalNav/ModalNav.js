@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Modal, Header, Button, Icon, Segment} from 'semantic-ui-react';
 import adminContext from '../../contexts/adminContext';
 
+
 class ModalNavTemplate extends Component{
     renderTriggerButton = () => {
         return (

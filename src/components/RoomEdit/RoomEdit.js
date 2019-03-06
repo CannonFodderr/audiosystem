@@ -121,6 +121,7 @@ class RoomEdit extends Component{
         serverAPI.put(`/rooms/${this.context.selectedRoom._id}`, data)
         .then(() => {
             this.context.getAllRooms();
+            this.props.handleModalClose();
         })
         .catch(err => console.log(err));
     }
@@ -145,13 +146,12 @@ class RoomEdit extends Component{
     }
     componentDidMount(){
         this.context.fetchUsersList();
-        this.context.fetchBooksList()
+        this.context.fetchBooksList();
         this.setCurrentState();
     }
     render(){
         return(
             <Segment inverted>
-                <h1>{this.context.selectedRoom.username} <Button inverted={true} floated="right" content={<Icon name='close'/>} onClick={() => {this.context.setSelectedRoom(null)}}/></h1>
                 <h4>Select User</h4>
                 {this.renderUserSelection()}
                 <h4>Select Book</h4>
