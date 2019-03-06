@@ -117,23 +117,32 @@ router.post('/books', isLoggedIn, (req, res) => {
     form.multiples = true;
     form.on('field', function(field, value) {
         bookData[field] = value;
-        console.log(bookData);
     })
     form.on('file', function(field, file) {
-        fs.renameSync(file.path, form.uploadDir + "/" + file.name);
-        bookData.parts.push(file.name);
+        let fileType = file.name.split('.').pop();
+        if(fileType === "mp3" || fileType === "wav"){
+            fs.renameSync(file.path, form.uploadDir + "/" + file.name);
+            bookData.parts.push(file.name);
+        } else {
+            fs.unlinkSync(file.path)
+            console.log("Not an audio file: ", file.name);
+        }
     })
     form.on('end', function() {
-        fs.renameSync(tempFolder, booksFolder + "/" + bookData.name);
-        Book.create(bookData)
-        .then(createdBook => {
-            res.send({msg: "Created book"});
-            
-        })
-        .catch(err => {
-            console.log(err);
-            res.send({msg: "Error", err});
-        })
+        if(bookData.parts.length < 1){
+            fs.rmdirSync(tempFolder);
+            res.json({})
+        } else {
+            fs.renameSync(tempFolder, booksFolder + "/" + bookData.name);
+                Book.create(bookData)
+                .then(createdBook => {
+                    res.send({msg: "Created book", data: createdBook});
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.send({msg: "Error", err});
+                })
+        }
     });
     form.parse(req, (err, fields, files) => {
         newBookFolder = path.join(booksFolder, fields.name)
@@ -149,6 +158,24 @@ router.get('/books/:bookId', (req, res) => {
         res.json(foundBook)
     })
     .catch(err => console.log(err));
+});
+
+router.delete('/books/:bookId',isLoggedIn, (req, res) => {
+    Book.findOneAndDelete({_id: req.params.bookId}).then((deletedBook) => {
+        let deleteFolerPath = path.join(__dirname, '../assets/books/', deletedBook.name)
+        if(fs.existsSync(deleteFolerPath)){
+            let files = fs.readdirSync(deleteFolerPath)
+            files.forEach(file => {
+                fs.unlinkSync(path.join(deleteFolerPath, file))
+            });
+            fs.rmdirSync(deleteFolerPath);
+        }
+        res.json({msg: "Deleted Book", data: deletedBook})
+    })
+    .catch(err => {
+        console.log(err);
+        res.json({msg: "Error", data: err})
+    })
 });
 
 

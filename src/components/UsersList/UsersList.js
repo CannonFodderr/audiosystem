@@ -25,12 +25,10 @@ class UsersList extends Component{
                         <Card.Content>
                             <Card.Header as="a" >{user.firstName} {user.lastName}</Card.Header>
                             <Card.Content extra>
-                            <Button size="small" negative onClick={() => {
-                                this.deleteUser(user)
-                            }}>
-                                <Icon name="delete" />
-                                Delete
-                            </Button>
+                                <Button size="small" negative onClick={() => {this.deleteUser(user)}}>
+                                    <Icon name="delete" />
+                                    Delete
+                                </Button>
                             </Card.Content>
                         </Card.Content>
                     </Card>
