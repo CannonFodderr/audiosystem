@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {serverAPI} from '../api/api'
 import PeerClient from 'peerjs';
-import {Confirm} from 'semantic-ui-react';
 const Context = React.createContext();
 const Peer = window.Peer;
 
@@ -36,7 +35,7 @@ export class AdminContextStore extends Component{
         this.state = INITIAL_STATE;
     }
     handleMenuItemClick = (e, {name}) => {
-        this.setState({activeMenuItem: name})
+        this.setState({activeMenuItem: name, isNavModalOpen: false})
     }
     dispalyNavModal = isNavModalOpen => {
         this.setState({isNavModalOpen });
@@ -48,18 +47,17 @@ export class AdminContextStore extends Component{
     }
     fetchUsersList = () => {
         serverAPI.get('/users')
-        .then(res => this.setState({ users: res.data, isNavModalOpen: false }))
-        .catch(err => { console.log(err)});
+        .then(res => this.setState({ users: res.data, isNavModalOpen: false}))
+        .catch(err => { console.log(err) });
     }
     fetchBooksList = () => {
         serverAPI.get('/books')
         .then(res =>  this.setState({books: res.data, isNavModalOpen: false}))
-        .catch(err => { console.log(err)});
+        .catch(err => { console.log(err) });
     }
     createNewBook = book => {
-        console.log(book);
         serverAPI.post('/books', book)
-        .then(res => { console.log(res)})
+        .then(() => { this.fetchBooksList() })
         .catch(err => console.log(err));
     }
     getAllRooms = async () => {

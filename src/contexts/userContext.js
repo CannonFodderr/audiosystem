@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import pitchFinder from 'pitchfinder';
 import appContext from './appContext';
-import {serverAPI} from '../api/api'
 import PeerClient from 'peerjs';
 
 const Context = React.createContext();
