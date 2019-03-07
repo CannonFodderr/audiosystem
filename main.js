@@ -2,7 +2,7 @@ const { app, BrowserWindow, Tray, Menu, dialog } = require('electron')
 const server = require('./server/server');
 const env = require('dotenv').config();
 const ip = require('ip')
-let localIP = ip.address();
+let localIP = ip.address('public', 'ipv4');
 // Get localhost ip
 
 app.commandLine.appendSwitch('ignore-certificate-errors');
