@@ -105,6 +105,7 @@ router.get('/books', isLoggedIn, (req, res) =>{
 router.post('/books', isLoggedIn, (req, res) => {
     let bookData = { parts: []}
     let newBookFolder;
+    let progress = 0;
     let form = new formidable.IncomingForm()
     let assetsFolder = path.join(__dirname, "../assets/")
     if(!fs.existsSync(assetsFolder)) fs.mkdirSync(assetsFolder);
@@ -112,10 +113,24 @@ router.post('/books', isLoggedIn, (req, res) => {
     if(!fs.existsSync(booksFolder)) fs.mkdirSync(booksFolder);
     let tempFolder = path.join(assetsFolder, "/books/temp");
     if(!fs.existsSync(tempFolder)) fs.mkdirSync(tempFolder);
-    form.uploadDir = path.join(tempFolder);
+    form.uploadDir = tempFolder;
+    form.maxFileSize = 2000 * 1024 * 1024;
     form.multiples = true;
+    form.parse(req, (err, fields, files) => {
+        newBookFolder = path.join(booksFolder, fields.name)
+    });
     form.on('field', function(field, value) {
         bookData[field] = value;
+    });
+    form.on('fileBegin', (name, file) => {
+        console.log("Uploading: ", name)
+        
+    });
+    form.on('error', (err) => {
+        console.log(err);
+    });
+    form.on('aborted', () => {
+        console.log("Aborted");
     })
     form.on('file', function(field, file) {
         let fileType = file.name.split('.').pop();
@@ -128,11 +143,12 @@ router.post('/books', isLoggedIn, (req, res) => {
         }
     })
     form.on('end', function() {
+        console.log("Form ended")
         if(bookData.parts.length < 1){
             fs.rmdirSync(tempFolder);
-            res.json({})
+            res.json({msg: "No files uploaded"})
         } else {
-            fs.renameSync(tempFolder, booksFolder + "/" + bookData.name);
+            fs.renameSync(tempFolder, newBookFolder)
                 Book.create(bookData)
                 .then(createdBook => {
                     res.send({msg: "Created book", data: createdBook});
@@ -140,13 +156,10 @@ router.post('/books', isLoggedIn, (req, res) => {
                 .catch(err => {
                     console.log(err);
                     res.send({msg: "Error", err});
-                })
+                })                
         }
     });
-    form.parse(req, (err, fields, files) => {
-        newBookFolder = path.join(booksFolder, fields.name)
-        if(!fs.existsSync(newBookFolder)) fs.mkdirSync(newBookFolder);
-    });
+    
 })
 
 
