@@ -12,9 +12,13 @@ const peerConfig = {
     debug: 0,
 }
 const INITIAL_STATE = {
+    activeMenuItem: "Rooms",
     peer: null,
     isPeerInitialized: false,
+    isNavModalOpen: false,
     rooms: [],
+    users: [],
+    books: [],
     onlineRooms: [],
     selectedRoom: null,
     editRoom: false,
@@ -22,7 +26,7 @@ const INITIAL_STATE = {
     currentCall: null,
     connData: {},
     userMicGainSlider: 50,
-    userPlayerGainSlider: 70
+    userPlayerGainSlider: 70,
 }
 
 export class AdminContextStore extends Component{
@@ -30,7 +34,33 @@ export class AdminContextStore extends Component{
         super(props)
         this.state = INITIAL_STATE;
     }
-    getAllRooms = () => {
+    handleMenuItemClick = (e, {name}) => {
+        this.setState({activeMenuItem: name, isNavModalOpen: false})
+    }
+    dispalyNavModal = isNavModalOpen => {
+        this.setState({isNavModalOpen });
+    }
+    createNewUser = user => {
+        serverAPI.post('/users', user)
+        .then(() => this.fetchUsersList())
+        .catch(err => console.log(err));
+    }
+    fetchUsersList = () => {
+        serverAPI.get('/users')
+        .then(res => this.setState({ users: res.data, isNavModalOpen: false}))
+        .catch(err => { console.log(err) });
+    }
+    fetchBooksList = () => {
+        serverAPI.get('/books')
+        .then(res =>  this.setState({books: res.data, isNavModalOpen: false}))
+        .catch(err => { console.log(err) });
+    }
+    createNewBook = book => {
+        serverAPI.post('/books', book)
+        .then(() => { this.fetchBooksList() })
+        .catch(err => console.log(err));
+    }
+    getAllRooms = async () => {
         serverAPI.get('/rooms')
         .then((res) => {
             this.setState({rooms: res.data});
@@ -109,7 +139,13 @@ export class AdminContextStore extends Component{
                 setCurrentCall: this.setCurrentCall,
                 hangCurrentCall: this.hangCurrentCall,
                 editSelectedRoom: this.editSelectedRoom,
-                getAllRooms: this.getAllRooms
+                getAllRooms: this.getAllRooms,
+                handleMenuItemClick: this.handleMenuItemClick,
+                createNewUser: this.createNewUser,
+                fetchUsersList: this.fetchUsersList,
+                fetchBooksList: this.fetchBooksList,
+                createNewBook: this.createNewBook,
+                dispalyNavModal: this.dispalyNavModal
                 }}>
                 {this.props.children}
             </Context.Provider>

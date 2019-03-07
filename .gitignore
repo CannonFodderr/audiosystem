@@ -15,7 +15,7 @@ auditorio-win32-x64
 release-builds
 # production
 /build
-
+release-builds/
 # misc
 .DS_Store
 .env.local

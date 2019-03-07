@@ -3,34 +3,50 @@ import {Button, Card, Icon, Container} from 'semantic-ui-react';
 import adminContext from '../../contexts/adminContext';
 import RoomEdit from '../RoomEdit/RoomEdit';
 import RoomControls from '../RoomControls/RoomControls';
+import RoomModalTemplate from '../RoomModal/RoomModal';
+
+const INITIAL_STATE = {
+    showModal: false
+}
 
 class RoomList extends Component{
-    constructor(props){
-        super(props)
+    state = INITIAL_STATE;
+    handleModalClose = () => {
+        this.setState({showModal: false});
+        this.context.setSelectedRoom(null);
+    }
+    showModal = (room, mode) => {
+        this.setState({showModal: true})
+        if(mode === "edit"){
+            this.context.editSelectedRoom(room)
+        }
+        if(mode === "view"){
+            this.context.setSelectedRoom(room)
+        }
     }
     renderRoomControlsOrEdit = () => {
         if(!this.context.selectedRoom){
             return <div></div>
-        } else if(this.context.selectedRoom && this.context.editRoom){
+        } else if(this.context.selectedRoom && this.context.editRoom && this.state.showModal){
+            let header = `Edit ${this.context.selectedRoom.username}`;
             return (
-                <Card.Content>
-                    <RoomEdit />
-                </Card.Content>
+                <RoomModalTemplate header={header} handleModalClose={this.handleModalClose} content={<RoomEdit handleModalClose={this.handleModalClose}/>}/>
+            )
+        } else if(this.context.selectedRoom && this.state.showModal){
+            let header = `${this.context.selectedRoom.username} Controls`;
+            return (
+                <RoomModalTemplate header={header} handleModalClose={this.handleModalClose} content={<RoomControls handleModalClose={this.handleModalClose}/>}/>
             )
         } else {
-            return (
-                <Card.Content>
-                    <RoomControls />
-                </Card.Content>
-            )
+            return <div></div>
         }
     }
     renderCardExtraContent = (room) => {
         return(
             <Card.Content extra>
                 <div className='ui two buttons'>
-                    <Button basic color='blue' onClick={() => {this.context.setSelectedRoom(room)}}>View</Button>
-                    <Button basic color='red' onClick={() => {this.context.editSelectedRoom(room)}}>Edit</Button>
+                    <Button basic color='blue' onClick={() => {this.showModal(room, "view")}}>View</Button>
+                    <Button basic color='red' onClick={() => {this.showModal(room, "edit")}}>Edit</Button>
                 </div>
             </Card.Content>
         )

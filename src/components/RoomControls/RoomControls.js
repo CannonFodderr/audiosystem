@@ -268,7 +268,6 @@ class RoomControls extends React.Component{
     render(){
         return(
             <Segment inverted>
-                <h1>{this.context.selectedRoom.username} <Button inverted={true} floated="right" content={<Icon name='close'/>} onClick={() => {this.context.setSelectedRoom(null)}}/></h1>
                 <audio crossorigin="anonymous"></audio>
                 {this.renderUserPlayerTime()}
                 {this.renderPlayerControls()}
