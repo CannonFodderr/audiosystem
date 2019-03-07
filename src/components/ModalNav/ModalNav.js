@@ -24,9 +24,6 @@ class ModalNavTemplate extends Component{
                 <Modal.Content>
                     {this.props.content}
                 </Modal.Content>
-                <Modal.Actions>
-                    {this.props.actions}
-                </Modal.Actions>
             </Modal>
         )
     }
